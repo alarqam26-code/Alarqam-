@@ -5199,15 +5199,24 @@ function saveBulkAtt(){
   saveDB();closeModal();toast(`✅ تم تسجيل ${count} طالب`);renderAttendance();updateSidebar();
 }
 
+function _attStudentOptsForTeacher(teacherId){
+  const list=teacherId?db.students.filter(s=>s.teacherId===teacherId):db.students;
+  if(!list.length) return `<option value="">— لا يوجد طلاب لهذا المعلم —</option>`;
+  return `<option value="">— اختر الطالب —</option>`+list.map(s=>`<option value="${s.id}">${s.name} (${s.id})</option>`).join("");
+}
+function attOnTeacherChange(selId,teacherSelId){
+  const teacherId=document.getElementById(teacherSelId).value||'';
+  const sSel=document.getElementById(selId);
+  if(sSel) sSel.innerHTML=_attStudentOptsForTeacher(teacherId);
+}
 function openAddAtt(){
-  const opts=db.students.map(s=>`<option value="${s.id}">${s.name} (${s.id})</option>`).join("");
-  const teacherOpts=`<option value="">— بدون معلم —</option>`+db.teachers.map(t=>`<option value="${t.id}">${t.name}</option>`).join("");
+  const teacherOpts=`<option value="">— كل المعلمين —</option>`+db.teachers.map(t=>`<option value="${t.id}">${t.name}</option>`).join("");
   openModal(`
     <div class="modal-head"><h3>📋 تسجيل حضور</h3><button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button></div>
     <div class="modal-body">
       <div class="form-group"><label>التاريخ</label><input id="m_adate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-      <div class="form-group"><label>الطالب</label><select id="m_asid"><option value="">— اختر الطالب —</option>${opts}</select></div>
-      <div class="form-group"><label>المعلم</label><select id="m_ateacher">${teacherOpts}</select></div>
+      <div class="form-group"><label>المعلم</label><select id="m_ateacher" onchange="attOnTeacherChange('m_asid','m_ateacher')">${teacherOpts}</select></div>
+      <div class="form-group"><label>الطالب</label><select id="m_asid">${_attStudentOptsForTeacher('')}</select></div>
       <div class="form-group"><label>الحالة</label><select id="m_astatus" onchange="attShowUnexcused(this.value)">
         <option value="حاضر">✅ حاضر</option>
         <option value="غائب">❌ غائب بعذر</option>
@@ -5234,6 +5243,13 @@ function saveAtt(forcedTeacherId){
   const teacherId=forcedTeacherId||document.getElementById("m_ateacher")?.value||null;
   const stu=db.students.find(s=>s.id===sid);
   if(!stu){toast("لم يتم العثور على الطالب","error");return;}
+
+  // ── Guard: student must belong to the selected teacher ──
+  if(teacherId && stu.teacherId && stu.teacherId!==teacherId){
+    const realTeacher=db.teachers.find(t=>t.id===stu.teacherId);
+    toast(`⚠️ الطالب ${stu.name} مسجّل مع معلم آخر (${realTeacher?realTeacher.name:'غير معروف'})`,"error");
+    return;
+  }
 
   // ── Guard: duplicate ──
   const duplicate=db.attendance.find(a=>a.sid===sid&&a.date===date&&a.teacherId===teacherId);
@@ -5448,6 +5464,14 @@ function attSaveEditedRecord(id){
   const newNote    = noteEl ? noteEl.value.trim() : (rec.note||'');
   const reason     = reasonEl ? reasonEl.value.trim() : '';
   if(!newDate){ toast('حدد التاريخ','error'); return; }
+
+  // ── Guard: teacher must match the student's own assigned teacher ──
+  const _stu=db.students.find(s=>String(s.id)===String(rec.sid));
+  if(_stu && _stu.teacherId && newTeacher && String(_stu.teacherId)!==String(newTeacher)){
+    const _rt=db.teachers.find(t=>String(t.id)===String(_stu.teacherId));
+    toast(`⚠️ هذا الطالب مسجّل مع معلم آخر (${_rt?_rt.name:'غير معروف'})`,"error");
+    return;
+  }
 
   const oldStatus=rec.status, oldTeacher=rec.teacherId, oldDate=rec.date;
   const noChange = (oldStatus===newStatus && String(oldTeacher)===String(newTeacher) && oldDate===newDate && (rec.note||'')===newNote);
@@ -20039,14 +20063,13 @@ function _calDeleteAtt(id, dateStr){
 }
 
 function openAddAttForDate(dateStr){
-  const opts=db.students.map(s=>`<option value="${s.id}">${s.name} (${s.id})</option>`).join("");
-  const teacherOpts=`<option value="">— بدون معلم —</option>`+db.teachers.map(t=>`<option value="${t.id}">${t.name}</option>`).join("");
+  const teacherOpts=`<option value="">— كل المعلمين —</option>`+db.teachers.map(t=>`<option value="${t.id}">${t.name}</option>`).join("");
   openModal(`
     <div class="modal-head"><h3>📋 تسجيل حضور — ${dateStr}</h3><button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button></div>
     <div class="modal-body">
       <div class="form-group"><label>التاريخ</label><input id="m_adate" type="date" value="${dateStr}"></div>
-      <div class="form-group"><label>الطالب</label><select id="m_asid"><option value="">— اختر الطالب —</option>${opts}</select></div>
-      <div class="form-group"><label>المعلم</label><select id="m_ateacher">${teacherOpts}</select></div>
+      <div class="form-group"><label>المعلم</label><select id="m_ateacher" onchange="attOnTeacherChange('m_asid','m_ateacher')">${teacherOpts}</select></div>
+      <div class="form-group"><label>الطالب</label><select id="m_asid">${_attStudentOptsForTeacher('')}</select></div>
       <div class="form-group"><label>الحالة</label><select id="m_astatus" onchange="attShowUnexcused(this.value)">
         <option value="حاضر">✅ حاضر</option>
         <option value="غائب">❌ غائب بعذر</option>
