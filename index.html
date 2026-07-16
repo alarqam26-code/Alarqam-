@@ -8487,6 +8487,7 @@ function renderSettings(){
           <button class="btn btn-blue" onclick="exportBackup()">⬇️ تصدير نسخة احتياطية</button>
           <label class="btn btn-purple" style="cursor:pointer">⬆️ استيراد نسخة <input type="file" accept=".json" onchange="importBackup(event)" style="display:none"></label>
           <button class="btn btn-green" onclick="openBackupsHistory()">🕐 النسخ التلقائية (آخر 5)</button>
+          <button class="btn" style="background:#0F2027;color:#22C55E;border:1px solid #22C55E55" onclick="openTelegramSettings()">📲 إعداد تيليجرام</button>
         </div>
       </div>
 
@@ -13459,13 +13460,16 @@ function v18SmartAlerts(){
 // ── Export/Import ──
 function v18ExportDB(){
   const data={version:'v18',exportDate:new Date().toISOString(),academyName:db.settings?.academyName||'أكاديمية الأرقم',db};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const jsonStr = JSON.stringify(data,null,2);
+  const blob=new Blob([jsonStr],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;a.download=`arqam_backup_${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
   toast('✅ تم تصدير النسخة الاحتياطية');
   v18UpdateSaveLabel();
+  // إرسال تلقائي لتيليجرام إن كان مُفعَّلاً
+  _sendBackupToTelegram(jsonStr);
 }
 
 function v18ImportDB(){
@@ -14133,6 +14137,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(typeof v18UpdateBadge==='function') v18UpdateBadge();
     v19UpdateBranding();
   }, 600);
+
+  // ── تهيئة إعدادات تيليجرام تلقائياً إن لم تكن موجودة ──
+  setTimeout(()=>{
+    if(typeof _getTelegramCfg === 'function'){
+      const existing = _getTelegramCfg();
+      if(!existing.token){
+        _saveTelegramCfg({
+          token:  '8384230577:AAF_wyCemh6nUjqPqyHPcGinUjlcn1Tm7Jo',
+          chatId: '1279177049',
+          enabled: true
+        });
+        console.log('✅ تم تهيئة إعدادات تيليجرام تلقائياً');
+      }
+    }
+  }, 1000);
 });
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────
@@ -14695,6 +14714,121 @@ function toggleAutoBackup(){
 function exportBackup(){
   localStorage.setItem('arqam_last_backup',new Date().toISOString());
   _origExportBackup&&_origExportBackup();
+  // _origExportBackup ستستدعي v18ExportDB التي تُرسل لتيليجرام تلقائياً
+}
+
+// ══════════════════════════════════════════════════════════════
+//  📲 إرسال النسخة الاحتياطية لتيليجرام تلقائياً
+// ══════════════════════════════════════════════════════════════
+
+function _getTelegramCfg(){
+  try{ return JSON.parse(localStorage.getItem('arqam_tg_cfg')||'{}'); }catch(e){ return {}; }
+}
+function _saveTelegramCfg(cfg){
+  localStorage.setItem('arqam_tg_cfg', JSON.stringify(cfg));
+}
+
+async function _sendBackupToTelegram(jsonStr){
+  const cfg = _getTelegramCfg();
+  if(!cfg.token || !cfg.chatId || cfg.enabled===false) return;
+
+  const acad = db.settings?.academyName || 'أكاديمية الأرقم';
+  const date = new Date().toISOString().slice(0,10);
+  const students = db.students?.length || 0;
+  const attendance = db.attendance?.length || 0;
+  const fileName = `arqam_backup_${date}.json`;
+
+  try {
+    // إرسال الملف عبر Telegram Bot API sendDocument
+    const formData = new FormData();
+    formData.append('chat_id', cfg.chatId);
+    formData.append('document', new Blob([jsonStr],{type:'application/json'}), fileName);
+    formData.append('caption',
+      `📦 *نسخة احتياطية — ${acad}*\n` +
+      `📅 التاريخ: ${date}\n` +
+      `👥 الطلاب: ${students}\n` +
+      `📋 سجلات الحضور: ${attendance}\n` +
+      `✅ تم الإرسال تلقائياً من النظام`
+    );
+    formData.append('parse_mode','Markdown');
+
+    const res = await fetch(`https://api.telegram.org/bot${cfg.token}/sendDocument`, {
+      method:'POST', body: formData
+    });
+    const json = await res.json();
+    if(json.ok){
+      toast('📲 تم إرسال النسخة لتيليجرام ✅');
+    } else {
+      console.warn('Telegram error:', json);
+      toast('⚠️ تعذّر الإرسال لتيليجرام: '+( json.description||'خطأ غير معروف'), 'error');
+    }
+  } catch(err){
+    console.error('Telegram send error:', err);
+    toast('⚠️ لم يتصل بتيليجرام — تحقق من الإنترنت', 'error');
+  }
+}
+
+// ── نافذة إعداد تيليجرام ──────────────────────────────────
+function openTelegramSettings(){
+  const cfg = _getTelegramCfg();
+  openModal(`
+    <div class="modal-head">
+      <h3>📲 إعداد النسخ الاحتياطي لتيليجرام</h3>
+      <button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#0F2027;border:1px solid #22C55E33;border-radius:12px;padding:14px;margin-bottom:16px;font-size:12px;color:#86EFAC;line-height:1.8">
+        📌 عند الضغط على أي زر "تصدير نسخة احتياطية"، يُرسَل الملف تلقائياً لـ Saved Messages في تيليجرام.
+      </div>
+      <div class="form-group">
+        <label>🤖 Bot Token</label>
+        <input id="tg_token" value="${escapeHtml(cfg.token||'')}" placeholder="1234567890:AAF..." style="direction:ltr;font-size:12px">
+      </div>
+      <div class="form-group">
+        <label>🆔 Chat ID</label>
+        <input id="tg_chatid" value="${escapeHtml(cfg.chatId||'')}" placeholder="123456789" style="direction:ltr;font-size:12px">
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="tg_enabled" ${cfg.enabled!==false?'checked':''} style="width:18px;height:18px;cursor:pointer">
+        <label for="tg_enabled" style="margin:0;cursor:pointer">تفعيل الإرسال التلقائي</label>
+      </div>
+      <div class="modal-btns" style="margin-top:16px">
+        <button class="btn btn-green" style="flex:1;justify-content:center" onclick="_saveTgSettings()">💾 حفظ الإعدادات</button>
+        <button class="btn btn-blue" style="flex:1;justify-content:center" onclick="_testTelegram()">🧪 اختبار الإرسال</button>
+        <button class="btn btn-gray" onclick="closeModal()">إلغاء</button>
+      </div>
+    </div>`);
+}
+
+function _saveTgSettings(){
+  const token  = document.getElementById('tg_token').value.trim();
+  const chatId = document.getElementById('tg_chatid').value.trim();
+  const enabled= document.getElementById('tg_enabled').checked;
+  if(!token||!chatId){ toast('أدخل الـ Token والـ Chat ID','error'); return; }
+  _saveTelegramCfg({token, chatId, enabled});
+  toast('✅ تم حفظ إعدادات تيليجرام');
+  closeModal();
+}
+
+async function _testTelegram(){
+  const token  = document.getElementById('tg_token').value.trim();
+  const chatId = document.getElementById('tg_chatid').value.trim();
+  if(!token||!chatId){ toast('أدخل الـ Token والـ Chat ID أولاً','error'); return; }
+  toast('⏳ جاري إرسال رسالة اختبار...');
+  try{
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: `✅ *اختبار ناجح!*\n\nالاتصال بنظام أكاديمية الأرقم يعمل بشكل صحيح.\nسيتم إرسال النسخ الاحتياطية هنا تلقائياً. 🎉`,
+        parse_mode:'Markdown'
+      })
+    });
+    const json = await res.json();
+    if(json.ok){ toast('✅ وصلت رسالة الاختبار لتيليجرام بنجاح!'); }
+    else { toast('❌ خطأ: '+(json.description||'تحقق من الـ Token والـ Chat ID'),'error'); }
+  }catch(err){ toast('❌ لا يوجد اتصال بالإنترنت','error'); }
 }
 </script>
 
