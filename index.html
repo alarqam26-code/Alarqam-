@@ -3083,6 +3083,25 @@ function getRemaining(s){
   return Math.max(0, (s.sessions||0) - getConsumed(s.id));
 }
 
+// ─── سعر الحصة الفعلي لطالب معيّن: سعر مخصص للطالب إن وُجد، وإلا سعر المعلم العام ───
+function getStudentRate(student, teacher){
+  if(student && student.customRate!=null && student.customRate!=='' && !isNaN(+student.customRate)){
+    return +student.customRate;
+  }
+  return teacher ? (teacher.ratePerSession||0) : 0;
+}
+// ─── إجمالي مستحقات معلم عن مجموعة سجلات حضور "حاضر" ضمن شهر معيّن، آخذاً بالحسبان الأسعار المخصصة لكل طالب ───
+function getTeacherDueForRecords(teacherId, monthKey){
+  const teacher=db.teachers.find(t=>t.id===teacherId);
+  if(!teacher) return 0;
+  return db.attendance
+    .filter(a=>a.teacherId===teacherId && a.status==='حاضر' && (!monthKey || a.date.startsWith(monthKey)))
+    .reduce((sum,a)=>{
+      const stu=db.students.find(s=>s.id===a.sid);
+      return sum+getStudentRate(stu,teacher);
+    },0);
+}
+
 // ─── Convert 24h "HH:MM" → 12h "h:MM ص/م" ───
 function fmt12(time24){
   if(!time24||!time24.includes(':'))return time24||'—';
@@ -3553,7 +3572,7 @@ function renderExpenses(){
   const teacherSalaries = db.teachers.map(t=>({
     name: t.name,
     sessions: t.monthlyRecords?.[selMonth]?.sessions||0,
-    earned: (t.monthlyRecords?.[selMonth]?.sessions||0)*(t.ratePerSession||0),
+    earned: getTeacherDueForRecords(t.id, selMonth),
     paid: t.monthlyRecords?.[selMonth]?.paid||0,
   })).filter(t=>t.sessions>0||t.paid>0);
   const totalSalaries = teacherSalaries.reduce((s,t)=>s+t.paid,0);
@@ -4022,8 +4041,7 @@ function getMonthNetProfit(monthKey){
 function renderDashboard(){
   const s=getStats();
   const totalTeacherPay=db.teachers.reduce((sum,t)=>{
-    const cur=getCurrentMonthSessions(t);
-    return sum+cur*t.ratePerSession;
+    return sum+getTeacherDueForRecords(t.id, getCurrentMonthKey());
   },0);
 
   // Month-over-month income comparison
@@ -4553,6 +4571,7 @@ function openAddStudent(){
       <div class="form-group"><label>الباقة</label><select id="m_pkg">${pkgOpts}</select></div>
       <div class="form-group"><label>تاريخ انتهاء الاشتراك <span style="color:#6B7280;font-size:11px">(اختياري)</span></label><input id="m_expiry" type="date"></div>
       <div class="form-group"><label>المعلم المسؤول</label><select id="m_teacher">${teacherOpts}</select></div>
+      <div class="form-group"><label>💰 سعر الحصة المخصص <span style="color:#6B7280;font-size:11px">(اختياري — للحصص المكثفة، اتركه فارغاً لاستخدام سعر المعلم العادي)</span></label><input id="m_customrate" type="number" min="0" placeholder="مثال: 40"></div>
       <div class="form-group"><label>ملاحظات (اختياري)</label><textarea id="m_notes" placeholder="مستوى الطالب، توصيات، ملاحظات..." style="height:70px;resize:vertical"></textarea></div>
       <div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:14px">
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">📅 جدول الحصص الأسبوعي</div>
@@ -4638,6 +4657,7 @@ function openEditStudent(id){
         </div>
       </div>
       <div class="form-group"><label>المعلم المسؤول</label><select id="m_eteacher">${teacherOpts}</select></div>
+      <div class="form-group"><label>💰 سعر الحصة المخصص <span style="color:#6B7280;font-size:11px">(اختياري — للحصص المكثفة، اتركه فارغاً لاستخدام سعر المعلم العادي)</span></label><input id="m_ecustomrate" type="number" min="0" value="${s.customRate!=null?s.customRate:''}" placeholder="مثال: 40"></div>
       <div class="form-group"><label>ملاحظات</label><textarea id="m_enotes" style="height:70px;resize:vertical">${escapeHtml(s.notes||'')}</textarea></div>
       <div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:14px">
         <div style="font-size:13px;font-weight:700;margin-bottom:4px">📅 جدول الحصص الأسبوعي</div>
@@ -4702,6 +4722,8 @@ function updateStudent(id){
   const newBase=parseInt(document.getElementById("m_erenewatt")?.value);
   if(!isNaN(newBase)&&newBase>=0) s.renewedAtAttendance=newBase;
   s.teacherId=teacherId;
+  const _ecrRaw=document.getElementById('m_ecustomrate')?.value;
+  s.customRate=(_ecrRaw!==undefined&&_ecrRaw!==''&&!isNaN(+_ecrRaw))?+_ecrRaw:null;
   s.notes=document.getElementById("m_enotes").value;
   s.scheduleDays=[...document.querySelectorAll('#m_days_chk input[type=checkbox]:checked')].map(c=>parseInt(c.value));
   const newDayTimes={};
@@ -4724,6 +4746,8 @@ function saveStudent(){
   const scheduleTime=scheduleDays.length>0?(scheduleDayTimes[scheduleDays[0]]||'16:00'):'16:00';
   const newId=nextStudentId();
   const _expiry=document.getElementById('m_expiry')?.value||'';
+  const _customRateRaw=document.getElementById('m_customrate')?.value;
+  const customRate=(_customRateRaw!==undefined&&_customRateRaw!==''&&!isNaN(+_customRateRaw))?+_customRateRaw:null;
   db.students.push({id:newId,name,
     phone:document.getElementById("m_phone").value,
     parentPhone:document.getElementById("m_parentphone").value,
@@ -4736,6 +4760,7 @@ function saveStudent(){
     pkg,sessions:PKG[pkg]||8,
     renewedAtAttendance:0, // ══ v35
     status:"active",teacherId,
+    customRate,
     notes:document.getElementById("m_notes").value,
     renewHistory:[],scheduleDays,
     scheduleTime,scheduleDayTimes,
@@ -6143,7 +6168,7 @@ function renderTeachers(){
 
   // ── Summary KPI Bar ──
   const totalSess=db.teachers.reduce((s,t)=>s+getCurrentMonthSessions(t),0);
-  const totalDueAll=db.teachers.reduce((s,t)=>s+getCurrentMonthSessions(t)*t.ratePerSession,0);
+  const totalDueAll=db.teachers.reduce((s,t)=>s+getTeacherDueForRecords(t.id, monthKey),0);
   const totalPaidAll=db.teachers.reduce((s,t)=>s+(t.monthlyRecords?.[monthKey]?.paid||0),0);
   const totalStudentsAssigned=new Set(db.students.filter(s=>s.teacherId).map(s=>s.teacherId)).size;
   const summaryBar=db.teachers.length?`
@@ -6173,7 +6198,7 @@ function renderTeachers(){
   // ── Teacher Cards ──
   const teachersHtml=db.teachers.length?db.teachers.map(t=>{
     const curSess=getCurrentMonthSessions(t);
-    const totalDue=curSess*t.ratePerSession;
+    const totalDue=getTeacherDueForRecords(t.id, monthKey);
     const rec=t.monthlyRecords?.[monthKey];
     const paidThisMonth=rec?.paid||0;
     const remaining=totalDue-paidThisMonth;
@@ -6217,7 +6242,7 @@ function renderTeachers(){
       const h=t.monthlyRecords[k];
       const [y,m]=k.split('-');
       const mLabel=`${MONTHS[parseInt(m)-1]} ${y}`;
-      const due=getTeacherSessionsByMonth(t.id,k)*t.ratePerSession;
+      const due=getTeacherDueForRecords(t.id,k);
       const paid=h.paid||0;
       const pct=Math.max(Math.round(getTeacherSessionsByMonth(t.id,k)/maxHistSess*100),0);
       return`<div class="t38-history-item">
@@ -6424,7 +6449,7 @@ function openTeacherProfile(tid){
     const d=new Date();d.setMonth(d.getMonth()-i);
     const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     const sess=getTeacherSessionsByMonth(tid,mk);
-    last6earn.push({lbl:MONTHS[d.getMonth()].slice(0,3),earned:sess*t.ratePerSession,paid:t.monthlyRecords?.[mk]?.paid||0});
+    last6earn.push({lbl:MONTHS[d.getMonth()].slice(0,3),earned:getTeacherDueForRecords(tid,mk),paid:t.monthlyRecords?.[mk]?.paid||0});
   }
   const maxEarn=Math.max(...last6earn.map(x=>x.earned),1);
   const earnChart=last6earn.map((x,i)=>`
@@ -6584,7 +6609,7 @@ function openTeacherReminders(tid){
   const cur=db.settings?.currency||'ج.م';
   const monthKey=getCurrentMonthKey();
   const curSess=getCurrentMonthSessions(t);
-  const totalDue=curSess*t.ratePerSession;
+  const totalDue=getTeacherDueForRecords(tid, monthKey);
   const paid=t.monthlyRecords?.[monthKey]?.paid||0;
   const rem=totalDue-paid;
   const phone=t.phone?.replace(/\D/g,'')||'';
@@ -6638,7 +6663,7 @@ function openTeacherComparison(){
   const monthLabel=getCurrentMonthLabel();
   const data=db.teachers.map(t=>{
     const sess=getCurrentMonthSessions(t);
-    const due=sess*t.ratePerSession;
+    const due=getTeacherDueForRecords(t.id, monthKey);
     const paid=t.monthlyRecords?.[monthKey]?.paid||0;
     const attRate=getTeacherAttRate(t.id);
     const stuCount=db.students.filter(s=>s.teacherId===t.id).length;
@@ -6880,7 +6905,7 @@ function openPayTeacher(id){
   if(!t)return;
   const key=getCurrentMonthKey();
   const cur=getCurrentMonthSessions(t);
-  const totalDue=cur*t.ratePerSession;
+  const totalDue=getTeacherDueForRecords(id, key);
   const rec=t.monthlyRecords&&t.monthlyRecords[key];
   const alreadyPaid=rec?rec.paid:0;
   const remaining=totalDue-alreadyPaid;
@@ -6917,7 +6942,7 @@ function confirmPayTeacher(id){
   if(amount<=0){toast("أدخل مبلغاً صحيحاً","error");return}
   // Guard: prevent overpayment
   const curSessions=getCurrentMonthSessions(t);
-  const totalDue=curSessions*t.ratePerSession;
+  const totalDue=getTeacherDueForRecords(id, key);
   const _rec=t.monthlyRecords&&t.monthlyRecords[key];
   const alreadyPaid=_rec?_rec.paid:0;
   const remaining=totalDue-alreadyPaid;
@@ -7190,10 +7215,10 @@ function getTeacherDashStats(teacher){
   const rec = teacher.monthlyRecords?.[key];
   const myStudents = db.students.filter(s=>s.teacherId===teacher.id);
   const monthSess = getTeacherSessionsByMonth(teacher.id, key);
-  const monthDue  = monthSess * teacher.ratePerSession;
+  const monthDue  = getTeacherDueForRecords(teacher.id, key);
   const monthPaid = rec?.paid||0;
   const totalSess = db.attendance.filter(a=>a.teacherId===teacher.id&&a.status==='حاضر').length;
-  const totalEarned = db.attendance.filter(a=>a.teacherId===teacher.id&&a.status==='حاضر').length * teacher.ratePerSession;
+  const totalEarned = getTeacherDueForRecords(teacher.id, null);
   const nearEnd = myStudents.filter(s=>getRemaining(s)<=3&&getRemaining(s)>0);
   const finished = myStudents.filter(s=>getRemaining(s)===0);
   const attRate = (()=>{
@@ -7524,7 +7549,7 @@ function renderMySessions(){
 
   const mySessions = db.attendance.filter(a=>a.teacherId===teacher.id).sort((a,b)=>b.date.localeCompare(a.date));
   const totalPresent = mySessions.filter(a=>a.status==='حاضر').length;
-  const totalEarned  = totalPresent * teacher.ratePerSession;
+  const totalEarned  = getTeacherDueForRecords(teacher.id, null);
   const totalPaidAll = Object.values(teacher.monthlyRecords||{}).reduce((s,r)=>s+(r.paid||0),0);
 
   // Group by month
@@ -7533,7 +7558,7 @@ function renderMySessions(){
   const monthKeys = Object.keys(byMonth).sort().reverse();
 
   // Monthly earnings chart (last 6 months)
-  const last6=[]; for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;const r=teacher.monthlyRecords?.[mk];const earned=getTeacherSessionsByMonth(teacher.id,mk)*teacher.ratePerSession;last6.push({lbl:MONTHS[d.getMonth()].slice(0,3),earned,paid:r?.paid||0});}
+  const last6=[]; for(let i=5;i>=0;i--){const d=new Date();d.setMonth(d.getMonth()-i);const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;const r=teacher.monthlyRecords?.[mk];const earned=getTeacherDueForRecords(teacher.id,mk);last6.push({lbl:MONTHS[d.getMonth()].slice(0,3),earned,paid:r?.paid||0});}
   const maxE = Math.max(...last6.map(x=>x.earned),1);
   const earningsChart = last6.map((x,i)=>`
     <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1">
@@ -7566,7 +7591,7 @@ function renderMySessions(){
     const sessInMonth = byMonth[mk];
     const presentCnt = sessInMonth.filter(a=>a.status==='حاضر').length;
     const absentCnt  = sessInMonth.filter(a=>a.status==='غائب').length;
-    const earned = presentCnt * teacher.ratePerSession;
+    const earned = getTeacherDueForRecords(teacher.id, mk);
     const rec = teacher.monthlyRecords?.[mk];
     const paid = rec?.paid||0;
     const pending = earned - paid;
@@ -7668,7 +7693,7 @@ function renderReports(){
         </div>`;}).join("")
     :`<div style="color:#4B5563;text-align:center;padding:24px;grid-column:1/-1">لا يوجد طلاب يوشكون على الانتهاء 🎉</div>`;
 
-  const totalTeacherDue=db.teachers.reduce((s,t)=>s+getCurrentMonthSessions(t)*t.ratePerSession,0);
+  const totalTeacherDue=db.teachers.reduce((s,t)=>s+getTeacherDueForRecords(t.id, getCurrentMonthKey()),0);
   const totalTeacherPaid=db.teachers.reduce((s,t)=>{const key=getCurrentMonthKey();const rec=t.monthlyRecords&&t.monthlyRecords[key];return s+(rec?rec.paid:0)},0);
 
   // ── بيانات الرسوم البيانية ──
@@ -7695,7 +7720,7 @@ function renderReports(){
   const teacherRows=db.teachers.map(t=>{
     const key=getCurrentMonthKey();
     const sessions=getCurrentMonthSessions(t);
-    const due=sessions*t.ratePerSession;
+    const due=getTeacherDueForRecords(t.id, key);
     const rec=t.monthlyRecords&&t.monthlyRecords[key];
     const paid=rec?rec.paid:0;
     const stuCount=db.students.filter(s=>s.teacherId===t.id).length;
@@ -8274,7 +8299,7 @@ function exportMySessionsPDF(){
     const sess=byMonth[mk];
     const present=sess.filter(a=>a.status==='حاضر').length;
     const absent=sess.filter(a=>a.status==='غائب').length;
-    const earned=present*teacher.ratePerSession;
+    const earned=getTeacherDueForRecords(teacher.id, mk);
     const rec=teacher.monthlyRecords&&teacher.monthlyRecords[mk];
     const paid=rec?rec.paid:0;
     const rows=sess.map(a=>{
@@ -8298,7 +8323,7 @@ function exportMySessionsPDF(){
     </div>`;
   }).join('');
   const totalPresent=mySessions.filter(a=>a.status==='حاضر').length;
-  const totalEarned=totalPresent*teacher.ratePerSession;
+  const totalEarned=getTeacherDueForRecords(teacher.id, null);
   const logoHtmlPDF=acad.logoImage?`<img src="${acad.logoImage}" style="height:50px;object-fit:contain;border-radius:8px">`:`<span style="font-size:34px">${acad.logo||'📖'}</span>`;
   const html=`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
   <style>
@@ -12274,7 +12299,7 @@ window.renderTeachers = function(){
       const present= db.attendance.filter(a=>a.teacherId===t.id&&a.status==='حاضر').length;
       const key    = getCurrentMonthKey();
       const rec    = t.monthlyRecords?.[key];
-      const due    = getTeacherSessionsByMonth(t.id, key)*t.ratePerSession;
+      const due    = getTeacherDueForRecords(t.id, key);
       const paid   = rec?.paid||0;
       const pending= due-paid;
       return `<div onclick="openTeacherProfile('${t.id}')" style="flex:1;min-width:170px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:border-color .2s,transform .2s" onmouseenter="this.style.borderColor='#A78BFA';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='';this.style.transform=''">
@@ -12315,13 +12340,13 @@ function openTeacherProfile(tid){
   const totalPresent= allAtt.filter(a=>a.status==='حاضر').length;
   const totalAbsent = allAtt.filter(a=>a.status==='غائب').length;
   const attRate     = allAtt.length>0?Math.round(totalPresent/allAtt.length*100):0;
-  const totalEarned = totalPresent*t.ratePerSession;
+  const totalEarned = getTeacherDueForRecords(tid, null);
   const totalPaidAll= Object.values(t.monthlyRecords||{}).reduce((s,r)=>s+(r.paid||0),0);
   const totalPending= totalEarned-totalPaidAll;
   const key         = getCurrentMonthKey();
   const rec         = t.monthlyRecords?.[key];
   const monthSess   = getTeacherSessionsByMonth(t.id, key);
-  const monthDue    = monthSess*t.ratePerSession;
+  const monthDue    = getTeacherDueForRecords(tid, key);
   const monthPaid   = rec?.paid||0;
 
   // Last 6 months chart
@@ -12331,7 +12356,7 @@ function openTeacherProfile(tid){
     const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     const r=t.monthlyRecords?.[mk];
     const _sess=getTeacherSessionsByMonth(t.id,mk);
-    last6.push({lbl:MONTHS[d.getMonth()].slice(0,3),sess:_sess,paid:r?.paid||0,due:_sess*t.ratePerSession,mk});
+    last6.push({lbl:MONTHS[d.getMonth()].slice(0,3),sess:_sess,paid:r?.paid||0,due:getTeacherDueForRecords(t.id,mk),mk});
   }
   const maxD=Math.max(...last6.map(x=>x.due),1);
   const chartBars=last6.map(x=>`
@@ -12513,7 +12538,7 @@ function openTeacherInvoice(tid, mk){
   const rec = t.monthlyRecords?.[mk];
   // Always compute from attendance records — never trust the manual counter
   const sessions = getTeacherSessionsByMonth(tid, mk);
-  const due  = sessions * t.ratePerSession;
+  const due  = getTeacherDueForRecords(tid, mk);
   const paid = rec?.paid||0;
   const pending = due - paid;
   const [y,m] = mk.split('-');
@@ -12546,10 +12571,10 @@ function openTeacherInvoice(tid, mk){
     <div><strong>السعر/حصة:</strong> ${t.ratePerSession} ج.م</div>
   </div>
   <table>
-    <thead><tr><th>التاريخ</th><th>الطالب</th><th>الحالة</th></tr></thead>
+    <thead><tr><th>التاريخ</th><th>الطالب</th><th>الحالة</th><th>سعر الحصة</th></tr></thead>
     <tbody>
-      ${attRows.map(a=>{const s=myStudents.find(x=>x.id===a.sid);return`<tr><td>${a.date}</td><td>${s?s.name:'—'}</td><td>${a.status}</td></tr>`;}).join('')}
-      <tr class="total-row"><td colspan="2">✅ إجمالي الحصص المحضورة</td><td>${sessions} حصة</td></tr>
+      ${attRows.map(a=>{const s=myStudents.find(x=>x.id===a.sid);const r=getStudentRate(s,t);return`<tr><td>${a.date}</td><td>${s?s.name:'—'}</td><td>${a.status}</td><td>${a.status==='حاضر'?r+' ج.م'+(s&&s.customRate!=null?' ⭐':''):'—'}</td></tr>`;}).join('')}
+      <tr class="total-row"><td colspan="3">✅ إجمالي الحصص المحضورة</td><td>${sessions} حصة</td></tr>
     </tbody>
   </table>
   <div class="footer">
@@ -18624,7 +18649,7 @@ function exportTeachersExcel(){
     const totalSess = db.attendance.filter(a=>a.teacherId===t.id&&a.status==='حاضر').length;
     const rec = t.monthlyRecords?.[key];
     const monthPaid = rec?.paid||0;
-    const monthDue  = monthSess * t.ratePerSession;
+    const monthDue  = getTeacherDueForRecords(t.id, key);
     return {
       'المعلم': t.name,
       'الهاتف': t.phone||'—',
@@ -18635,7 +18660,7 @@ function exportTeachersExcel(){
       'مدفوع الشهر': monthPaid,
       'متبقي الشهر': monthDue - monthPaid,
       'إجمالي الحصص': totalSess,
-      'إجمالي المستحق': totalSess * t.ratePerSession,
+      'إجمالي المستحق': getTeacherDueForRecords(t.id, null),
     };
   });
 
@@ -18677,7 +18702,7 @@ function exportFullReportExcel(){
   // ورقة المعلمين
   const teachRows = db.teachers.map(t=>{
     const sess=getTeacherSessionsByMonth(t.id,key);
-    const due=sess*t.ratePerSession;
+    const due=getTeacherDueForRecords(t.id, key);
     const paid=t.monthlyRecords?.[key]?.paid||0;
     return {'المعلم':t.name,'حصص الشهر':sess,'المستحق':due,'المدفوع':paid,'المتبقي':due-paid};
   });
@@ -19385,7 +19410,7 @@ function runSmartAlerts(){
   const unpaidTeachers = db.teachers.filter(t=>{
     const sess = getTeacherSessionsByMonth(t.id, key);
     const paid = t.monthlyRecords?.[key]?.paid || 0;
-    return sess > 0 && paid < sess * t.ratePerSession;
+    return sess > 0 && paid < getTeacherDueForRecords(t.id, key);
   });
   if(unpaidTeachers.length)
     alerts.push({type:'warn', icon:'💰', title:`${unpaidTeachers.length} معلم لم يُصرف مرتبه`, sub:unpaidTeachers.slice(0,3).map(t=>t.name).join('، ')+(unpaidTeachers.length>3?` وآخرون`:''), action:()=>{showTab('teachers');}});
@@ -19601,7 +19626,7 @@ function printTeacherInvoicePDF(tid, mk){
   if(!t){ toast('المعلم غير موجود','error'); return; }
   if(!mk) mk = getCurrentMonthKey();
   const sessions = getTeacherSessionsByMonth(tid, mk);
-  const due      = sessions * t.ratePerSession;
+  const due      = getTeacherDueForRecords(tid, mk);
   const rec      = t.monthlyRecords?.[mk];
   const paid     = rec?.paid||0;
   const pending  = due - paid;
@@ -19625,10 +19650,13 @@ function printTeacherInvoicePDF(tid, mk){
     const info = byStudent[s.id]||{count:0,dates:[]};
     const rem  = getRemaining(s);
     const status = rem===0?'<span class="badge-red">انتهت</span>':rem<=3?'<span class="badge-gold">يوشك</span>':'<span class="badge-green">نشط</span>';
+    const rate = getStudentRate(s,t);
+    const amount = info.count*rate;
     return `<tr>
-      <td>${s.name}</td>
+      <td>${s.name}${s.customRate!=null?' ⭐':''}</td>
       <td style="text-align:center">${info.count}</td>
       <td style="text-align:center;color:#6B7280;font-size:10px">${info.dates.join(' · ')||'—'}</td>
+      <td style="text-align:center">${info.count?amount.toLocaleString()+' '+cur:'—'}</td>
       <td style="text-align:center">${rem}</td>
       <td style="text-align:center">${status}</td>
     </tr>`;
@@ -19686,10 +19714,11 @@ function printTeacherInvoicePDF(tid, mk){
         <th>الطالب</th>
         <th style="text-align:center">الحضور</th>
         <th style="text-align:center">التواريخ</th>
+        <th style="text-align:center">المبلغ</th>
         <th style="text-align:center">المتبقي</th>
         <th style="text-align:center">الحالة</th>
       </tr></thead>
-      <tbody>${stuRows||'<tr><td colspan="5" style="text-align:center;color:#9CA3AF;padding:16px">لا توجد حصص هذا الشهر</td></tr>'}</tbody>
+      <tbody>${stuRows||'<tr><td colspan="6" style="text-align:center;color:#9CA3AF;padding:16px">لا توجد حصص هذا الشهر</td></tr>'}</tbody>
     </table>
 
     ${paid>0?`
@@ -20098,12 +20127,12 @@ function printMonthlyReportPDF(mk){
   const totalAbs  = db.attendance.filter(a=>a.status!=='حاضر'&&a.date.startsWith(mk)).length;
   const attRate   = (totalAtt+totalAbs)>0?Math.round(totalAtt/(totalAtt+totalAbs)*100):0;
   const monthPay  = db.payments.filter(p=>(p.date||p.month||'').startsWith(mk)).reduce((s,p)=>s+p.paid,0);
-  const teacherDue= db.teachers.reduce((s,t)=>s+getTeacherSessionsByMonth(t.id,mk)*t.ratePerSession,0);
+  const teacherDue= db.teachers.reduce((s,t)=>s+getTeacherDueForRecords(t.id,mk),0);
   const newStudents= db.students.filter(s=>(s.joinDate||'').startsWith(mk)).length;
 
   const teacherRows = db.teachers.map(t=>{
     const sess = getTeacherSessionsByMonth(t.id, mk);
-    const due  = sess * t.ratePerSession;
+    const due  = getTeacherDueForRecords(t.id, mk);
     const paid = t.monthlyRecords?.[mk]?.paid||0;
     const studs= db.students.filter(s=>s.teacherId===t.id).length;
     return `<tr>
@@ -22903,7 +22932,7 @@ window.renderTeachers=function(){
     const el=document.getElementById('tab-teachers');if(!el)return;
     if(!el.querySelector('#v33TBar')){
       const mk=_mk();const cur=db.settings?.currency||'ج.م';
-      const tDue=db.teachers.reduce((s,t)=>{const r=t.monthlyRecords?.[mk];const sess=r?r.sessions:db.attendance.filter(a=>a.teacherId===t.id&&a.status==='حاضر'&&a.date.startsWith(mk)).length;return s+sess*(t.ratePerSession||0);},0);
+      const tDue=db.teachers.reduce((s,t)=>s+getTeacherDueForRecords(t.id, mk),0);
       const tPaid=db.teachers.reduce((s,t)=>{const r=t.monthlyRecords?.[mk];return s+(r?r.paid:0);},0);
       const bar=document.createElement('div');bar.id='v33TBar';bar.style.cssText='margin-bottom:16px';
       bar.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">'
@@ -22964,7 +22993,7 @@ window.v33TInvoice=function(tid,mk2){
   const rec=t.monthlyRecords?.[mk]||{sessions:0,paid:0,payLog:[]};
   const atts=db.attendance.filter(a=>a.teacherId===tid&&a.status==='حاضر'&&a.date.startsWith(mk));
   const sess=rec.sessions||atts.length;
-  const tDue=sess*(t.ratePerSession||0);const tPaid=rec.paid||0;const rem=tDue-tPaid;
+  const tDue=getTeacherDueForRecords(tid, mk);const tPaid=rec.paid||0;const rem=tDue-tPaid;
   const iNum=_docNum('INV');const tISO=new Date().toISOString().slice(0,10);
   const sc=rem<=0?'#16A34A':rem<tDue?'#CA8A04':'#DC2626';
   const st=rem<=0?'مدفوع ✅':rem<tDue?'جزئي ⚠️':'متأخر ❌';
@@ -22973,7 +23002,8 @@ window.v33TInvoice=function(tid,mk2){
   const byD={};atts.forEach(a=>{if(!byD[a.date])byD[a.date]=[];byD[a.date].push(a);});
   const sRows=Object.entries(byD).sort(([a],[b])=>a.localeCompare(b)).map(([d,arr])=>{
     const ns=arr.map(a=>{const s=db.students.find(x=>x.id===a.sid);return s?s.name:'—';}).join('، ');
-    return'<tr><td>'+d+'</td><td style="text-align:center">'+arr.length+'</td><td style="font-size:10px;color:#6B7280">'+ns+'</td><td style="text-align:left;font-weight:700;color:#CA8A04">'+(arr.length*(t.ratePerSession||0)).toLocaleString()+'</td></tr>';
+    const dAmt=arr.reduce((sum,a)=>{const s=db.students.find(x=>x.id===a.sid);return sum+getStudentRate(s,t);},0);
+    return'<tr><td>'+d+'</td><td style="text-align:center">'+arr.length+'</td><td style="font-size:10px;color:#6B7280">'+ns+'</td><td style="text-align:left;font-weight:700;color:#CA8A04">'+dAmt.toLocaleString()+'</td></tr>';
   }).join('')||'<tr><td colspan="4" style="text-align:center;color:#9CA3AF;padding:13px">لا توجد حصص</td></tr>';
   const pRows=(rec.payLog||[]).map(p=>'<tr><td>'+(p.date||'—')+'</td><td style="color:#16A34A;font-weight:700">'+Number(p.amount||0).toLocaleString()+' '+cur+'</td><td>'+(p.note||'—')+'</td></tr>').join('')||'<tr><td colspan="3" style="text-align:center;color:#9CA3AF;padding:9px">لا توجد مدفوعات</td></tr>';
   const html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>فاتورة — '+t.name+'</title>'
@@ -23039,7 +23069,7 @@ window.v33TReceipt=function(tid,mk2){
   const AN=cfg.academyName||'أكاديمية الأرقم';const mN=_mName(mk);
   const rec=t.monthlyRecords?.[mk]||{sessions:0,paid:0,payLog:[]};
   const sess=rec.sessions||db.attendance.filter(a=>a.teacherId===tid&&a.status==='حاضر'&&a.date.startsWith(mk)).length;
-  const tDue=sess*(t.ratePerSession||0);const tPaid=rec.paid||0;const rem=tDue-tPaid;
+  const tDue=getTeacherDueForRecords(tid, mk);const tPaid=rec.paid||0;const rem=tDue-tPaid;
   const rNum=_docNum('RCP');const tISO=new Date().toISOString().slice(0,10);const isPaid=rem<=0;
   const logoH=cfg.logoImage?'<img src="'+cfg.logoImage+'" style="height:50px;object-fit:contain;border-radius:8px">':"<span style='font-size:32px'>"+(cfg.logo||'📖')+"</span>";
   const stampH=cfg.stampImage?'<img src="'+cfg.stampImage+'" style="width:78px;height:78px;object-fit:contain;opacity:.85">':"<div style='width:78px;height:78px;border-radius:50%;border:2px dashed #BAE6FD;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:10px;text-align:center'>ختم</div>";
@@ -23082,7 +23112,7 @@ window.v33TWA=function(tid){
   const t=db.teachers.find(x=>x.id===tid);if(!t||!t.phone){toast('لا يوجد رقم هاتف','error');return;}
   const mk=_mk();const rec=t.monthlyRecords?.[mk]||{sessions:0,paid:0};
   const sess=rec.sessions||db.attendance.filter(a=>a.teacherId===tid&&a.status==='حاضر'&&a.date.startsWith(mk)).length;
-  const due=sess*(t.ratePerSession||0);const paid=rec.paid||0;const rem=due-paid;
+  const due=getTeacherDueForRecords(tid, mk);const paid=rec.paid||0;const rem=due-paid;
   const cur=db.settings?.currency||'ج.م';const AN=db.settings?.academyName||'أكاديمية الأرقم';
   const msg='السلام عليكم ورحمة الله 🌙\n\n🧾 *كشف راتب — '+AN+'*\n━━━━━━━━━━━━\n👨‍🏫 *'+t.name+'*\n📅 '+_mName(mk)+'\n\n📊 '+sess+' حصة × '+Number(t.ratePerSession||0).toLocaleString()+' '+cur+'\n💰 المستحق: '+due.toLocaleString()+' '+cur+'\n✅ المدفوع: '+paid.toLocaleString()+' '+cur+'\n'+(rem>0?'⏳ المتبقي: '+rem.toLocaleString()+' '+cur:'✅ مكتمل')+'\n\nجزاكم الله خيراً 📖\n— '+AN;
   window.open('https://wa.me/'+t.phone.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank');
@@ -23096,7 +23126,7 @@ window.v33AllSummary=function(){
   const logoH=cfg.logoImage?'<img src="'+cfg.logoImage+'" style="height:46px;object-fit:contain;border-radius:7px">':"<span style='font-size:30px'>"+(cfg.logo||'📖')+"</span>";
   const rows=db.teachers.map((t,i)=>{
     const rec=t.monthlyRecords?.[mk]||{};const sess=rec.sessions||db.attendance.filter(a=>a.teacherId===t.id&&a.status==='حاضر'&&a.date.startsWith(mk)).length;
-    const due=sess*(t.ratePerSession||0);const paid=rec.paid||0;const rem=due-paid;
+    const due=getTeacherDueForRecords(t.id, mk);const paid=rec.paid||0;const rem=due-paid;
     gD+=due;gP+=paid;gS+=sess;
     const sc=rem<=0?'#16A34A':rem<due?'#CA8A04':'#DC2626';
     return'<tr style="background:'+(i%2===0?'#fff':'#F9FAFB')+'">'
