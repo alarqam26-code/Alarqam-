@@ -163,7 +163,7 @@
   /* Alerts in dropdown */
   .alerts-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;padding:0 8px}
   .alert-item{font-size:11px;padding:8px 10px;border-radius:8px;margin:0 8px 4px;line-height:1.5}
-  .alert-item.warn{background:#B8892B16;color:#E9D8AE}
+  .alert-item.warn{background:#B8892B16;color:#9C7223}
   .alert-item.err{background:#C64B3C14;color:#C64B3C}
 
   /* MAIN */
@@ -306,8 +306,9 @@
   .t38-sum-card{
     background:var(--surface);border:1px solid var(--border);
     border-radius:18px;padding:16px 18px;
-    display:flex;flex-direction:column;gap:4px;
+    display:flex;flex-direction:column;gap:4px;justify-content:center;
     position:relative;overflow:hidden;transition:var(--transition);
+    min-height:92px;box-sizing:border-box;
   }
   .t38-sum-card::before{
     content:'';position:absolute;top:0;left:0;right:0;height:2px;
@@ -321,23 +322,19 @@
   .t38-sum-lbl{font-size:11px;color:var(--muted)}
   .t38-sum-sub{font-size:11px;font-weight:700;margin-top:2px}
 
-  /* Teacher card v38 */
-  .teacher-card{
+  /* Teacher list — compact card grid v39 */
+  .tcc-grid{display:flex;flex-direction:column;gap:14px}
+  .teacher-card-compact{
     background:var(--surface);border:1px solid var(--border);
-    border-radius:22px;margin-bottom:20px;overflow:hidden;
+    border-radius:20px;padding:18px 20px;cursor:pointer;
     transition:var(--transition);
   }
-  .teacher-card:hover{box-shadow:0 8px 40px rgba(31,42,36,.09);transform:translateY(-1px)}
-  .teacher-card-top{
-    background:linear-gradient(135deg,#FBF9F3,#FFFFFF);
-    border-bottom:1px solid var(--border);
-    padding:20px 24px;
-    display:flex;align-items:center;gap:16px;
-  }
+  .teacher-card-compact:hover{box-shadow:0 8px 32px rgba(31,42,36,.08);border-color:rgba(15,110,92,.25);transform:translateY(-1px)}
+
   .t38-avatar{
-    width:56px;height:56px;border-radius:16px;flex-shrink:0;
+    width:56px;height:56px;border-radius:50%;flex-shrink:0;
     display:flex;align-items:center;justify-content:center;
-    font-size:22px;font-weight:900;color:#fff;
+    font-size:22px;font-weight:900;color:#fff;font-family:'Amiri',serif;
     background:linear-gradient(135deg,#0F6E5C,#0A4F42);
     box-shadow:0 4px 16px rgba(15,110,92,.4);
     position:relative;
@@ -348,13 +345,34 @@
     width:12px;height:12px;border-radius:50%;
     background:#0F6E5C;border:2px solid var(--surface);
   }
-  .t38-teacher-info{flex:1;min-width:0}
-  .t38-teacher-name{font-size:18px;font-weight:900;color:var(--text)}
-  .t38-teacher-meta{font-size:12px;color:var(--muted);margin-top:3px}
-  .t38-rating{display:flex;gap:2px;align-items:center;margin-top:4px}
-  .t38-star{font-size:13px}
-  .t38-rating-val{font-size:11px;color:var(--muted);margin-right:4px}
-  .t38-top-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  .tcc-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .tcc-avatar{width:52px;height:52px;font-size:19px;flex-shrink:0}
+  .tcc-info{flex:1;min-width:0}
+  .tcc-name{font-size:16px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tcc-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .tcc-rating{display:flex;align-items:center;gap:4px;margin-top:4px}
+  .tcc-actions{display:flex;gap:6px;flex-shrink:0}
+
+  .tcc-stats{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    background:var(--surface2);border-radius:14px;overflow:hidden;
+    margin-bottom:12px;
+  }
+  .tcc-stat{padding:10px 6px;text-align:center;border-left:1px solid var(--border)}
+  .tcc-stat:first-child{border-left:none}
+  .tcc-stat-val{font-size:17px;font-weight:900;line-height:1}
+  .tcc-stat-lbl{font-size:9.5px;color:var(--muted);margin-top:4px}
+
+  .tcc-salary{margin-bottom:10px}
+  .tcc-salary-row{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);margin-bottom:6px}
+
+  .tcc-alerts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .tcc-alert-chip{font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+  .tcc-alert-chip.warn{background:#B8892B16;color:#B8892B}
+  .tcc-alert-chip.danger{background:#C64B3C14;color:#C64B3C}
+
+  .tcc-footer{display:flex;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border)}
 
   /* Performance meter */
   .t38-perf-bar{
@@ -362,44 +380,9 @@
   }
   .t38-perf-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
-  /* Stats grid */
-  .teacher-stats{
-    display:grid;grid-template-columns:repeat(4,1fr);
-    gap:0;border-bottom:1px solid var(--border);
-  }
-  .teacher-stat{
-    padding:16px 12px;text-align:center;
-    border-left:1px solid var(--border);cursor:default;
-    transition:background .15s;
-  }
-  .teacher-stat:first-child{border-left:none}
-  .teacher-stat:hover{background:rgba(255,255,255,.02)}
-  .teacher-stat-val{font-size:20px;font-weight:900;color:var(--text);line-height:1}
-  .teacher-stat-lbl{font-size:10px;color:var(--muted);margin-top:4px}
-
-  /* Card body */
-  .teacher-card-body{padding:20px 24px}
-
-  /* Student chips */
-  .t38-stu-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-  .t38-stu-chip{
-    background:#EFEAE0;color:#2A6F97;
-    padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;
-    display:inline-flex;align-items:center;gap:4px;
-  }
-  .t38-stu-chip.warn{background:#B8892B16;color:#B8892B}
-  .t38-stu-chip.danger{background:#C64B3C14;color:#C64B3C}
-
-  /* Salary progress */
-  .t38-salary-block{
-    background:var(--surface2);border-radius:14px;padding:14px 16px;
-    margin:16px 0;
-  }
-  .t38-salary-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:8px}
+  /* Salary progress (shared: compact card + profile modal) */
   .t38-salary-progress{height:8px;background:var(--surface3);border-radius:4px;overflow:hidden}
   .t38-salary-fill{height:100%;border-radius:4px;transition:width .6s}
-
-  /* History timeline */
   .t38-history-item{
     display:flex;align-items:center;gap:12px;padding:10px 0;
     border-bottom:1px solid var(--border);font-size:12px;
@@ -439,9 +422,9 @@
     padding:24px;text-align:center;border-bottom:1px solid var(--border);
   }
   .t38-profile-avatar-lg{
-    width:80px;height:80px;border-radius:24px;margin:0 auto 12px;
+    width:80px;height:80px;border-radius:50%;margin:0 auto 12px;
     display:flex;align-items:center;justify-content:center;
-    font-size:32px;font-weight:900;color:#fff;
+    font-size:32px;font-weight:900;color:#fff;font-family:'Amiri',serif;
     background:linear-gradient(135deg,#0F6E5C,#0A4F42);
     box-shadow:0 8px 32px rgba(15,110,92,.4);
   }
@@ -485,7 +468,8 @@
   .teacher-stat-lbl{font-size:11px;color:var(--muted);margin-top:4px}
 
   @media(max-width:768px){
-    .t38-summary-bar{grid-template-columns:repeat(2,1fr)!important}
+    .t38-summary-bar{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
+    .t38-sum-card{min-height:84px!important}
     .teacher-stats{grid-template-columns:repeat(2,1fr)!important}
     .t38-action-grid{grid-template-columns:repeat(3,1fr)!important}
     .teacher-card-top{flex-wrap:wrap}
@@ -521,8 +505,8 @@
   #student-portal{
     display:none;align-items:center;justify-content:center;
     min-height:100vh;background:var(--bg);
-    background-image:radial-gradient(ellipse at 20% 80%, #EFEAE044 0%, transparent 50%),
-                     radial-gradient(ellipse at 80% 20%, #05142E44 0%, transparent 50%);
+    background-image:radial-gradient(ellipse at 20% 80%, #B8892B18 0%, transparent 50%),
+                     radial-gradient(ellipse at 80% 20%, #0F6E5C18 0%, transparent 50%);
   }
   .portal-card{
     width:480px;max-width:95vw;
@@ -537,9 +521,10 @@
     display:flex;align-items:center;gap:14px;
   }
   .portal-avatar{
-    width:56px;height:56px;border-radius:16px;flex-shrink:0;
-    background:linear-gradient(135deg,#2563EB,#0F6E5C);
+    width:56px;height:56px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#0F6E5C,#0A4F42);
     display:flex;align-items:center;justify-content:center;font-size:26px;
+    box-shadow:0 4px 16px rgba(15,110,92,.3);
   }
   .portal-student-name{font-size:18px;font-weight:900}
   .portal-student-id{font-size:11px;color:var(--muted);margin-top:3px;font-family:monospace}
@@ -994,7 +979,7 @@
   .surah-chip{padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:all .2s;font-size:12px;text-align:center;user-select:none}
   .surah-chip:hover{border-color:var(--green);background:#0F6E5C22}
   .surah-chip.memorized{background:linear-gradient(135deg,#0F6E5C14,#0A4F42);border-color:var(--green);color:#3FA98A}
-  .surah-chip.reviewing{background:linear-gradient(135deg,#B8892B16,#5a2504);border-color:var(--gold);color:#E9D8AE}
+  .surah-chip.reviewing{background:linear-gradient(135deg,#B8892B16,#B8892B26);border-color:var(--gold);color:#9C7223}
   .surah-chip.partial{background:linear-gradient(135deg,#EFEAE0,#EFEAE0);border-color:var(--blue);color:#2A6F97}
   .surah-chip-num{font-size:10px;color:var(--muted);margin-bottom:2px}
   .progress-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -1168,7 +1153,7 @@
   .att-quick-card:hover{border-color:#0F6E5C;transform:translateY(-2px)}
   .att-quick-card.done{border-color:#0F6E5C;background:#0F6E5C44}
   .att-quick-card.absent-card{border-color:#C64B3C;background:#C64B3C44}
-  .att-quick-card.unexcused-card{border-color:#EA580C;background:#431407cc}
+  .att-quick-card.unexcused-card{border-color:#C08A1E;background:#C08A1E22}
   .att-quick-card.unexcused-card .aqc-name{color:#C08A1E}
   .aqc-name{font-size:13px;font-weight:700;margin-bottom:3px;padding-left:24px}
   .aqc-time{font-size:11px;color:#6B7570}
@@ -1524,13 +1509,15 @@
     padding: 12px 20px !important;
   }
   #toast.success {
-    background: rgba(15,110,92,.9) !important;
+    background: rgba(15,110,92,.1) !important;
     border: 1px solid rgba(15,110,92,.35) !important;
+    color: #0F6E5C !important;
     box-shadow: 0 8px 40px rgba(31,42,36,.12), var(--glow-green) !important;
   }
   #toast.error {
-    background: rgba(198,75,60,.9) !important;
+    background: rgba(198,75,60,.1) !important;
     border: 1px solid rgba(198,75,60,.35) !important;
+    color: #C64B3C !important;
   }
 
   /* ── Content area animation ── */
@@ -1816,15 +1803,6 @@ html, body {
   }
   .kpi-label { font-size: 10px !important; }
   .kpi-sub { font-size: 10px !important; }
-
-  /* ── بطاقات الملخص (t38-summary-bar) ── */
-  .t38-summary-bar {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-    margin-bottom: 12px !important;
-  }
-  .t38-sum-card { padding: 12px 14px !important; }
-  .t38-sum-val { font-size: 20px !important; }
 
   /* ── الرسوم البيانية ── */
   .charts-row {
@@ -2140,9 +2118,6 @@ html, body {
   .bar-chart { height: 60px !important; }
   .bar-lbl, .bar-val { font-size: 8px !important; }
 
-  /* ── قائمة الانتظار ── */
-  #tab-waitlist .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-
   /* ── قوائم التذكيرات ── */
   .reminder-item { padding: 8px 10px !important; }
   .reminder-name { font-size: 12px !important; }
@@ -2300,7 +2275,7 @@ html, body {
       <div style="position:relative;margin-bottom:14px"><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)">📱</span><input id="v18ParentPhone" type="tel" placeholder="رقم هاتف ولي الأمر" style="width:100%;padding:13px 44px;background:#FFFFFF;border:1.5px solid #E7E2D6;border-radius:12px;color:#1F2A24;font-family:'Cairo',sans-serif;font-size:14px;outline:none;box-sizing:border-box" onkeydown="if(event.key==='Enter')doParentLogin()"></div>
       <button onclick="doParentLogin()" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#D97706,#B45309);color:#fff;font-family:'Cairo',sans-serif;font-size:15px;font-weight:900;cursor:pointer">👨‍👩‍👧 عرض أبنائي</button>
     </div>
-    <div style="text-align:center;margin-top:20px;font-size:10px;color:#EFEAE0">🔒 اتصال آمن ومشفّر</div>
+    <div style="text-align:center;margin-top:20px;font-size:10px;color:#9CA39D">🔒 اتصال آمن ومشفّر</div>
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid #E7E2D6;text-align:center">
       <button onclick="clearAllDataNow()" style="background:transparent;border:1px solid #C64B3C33;border-radius:8px;color:#C64B3C;font-size:12px;font-family:'Cairo',sans-serif;padding:8px 16px;cursor:pointer">🗑️ مسح كل البيانات من المتصفح</button>
     </div>
@@ -2419,14 +2394,9 @@ html, body {
     <div id="tab-reminders" style="display:none"></div>
     <div id="tab-schedule" style="display:none"></div>
     <div id="tab-timetable" style="display:none"></div>
-    <div id="tab-quran" style="display:none"></div>
-    <div id="tab-waitlist" style="display:none"></div>
-    <div id="tab-discounts" style="display:none"></div>
-    <div id="tab-exams" style="display:none"></div>
     <div id="tab-expenses" style="display:none"></div>
 
     <div id="tab-calendar" style="display:none"></div>
-    <div id="tab-pending" style="display:none"></div>
     <div id="tab-archive" style="display:none"></div>
   </div>
 
@@ -2499,26 +2469,11 @@ html, body {
     <button onclick="mbnSwitch('expenses',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
       <span style="font-size:22px">💸</span>المصاريف
     </button>
-    <button onclick="mbnSwitch('discounts',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🏷️</span>الخصومات
-    </button>
-    <button onclick="mbnSwitch('exams',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">📝</span>الاختبارات
-    </button>
-    <button onclick="mbnSwitch('quran',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">📖</span>تقدم القرآن
-    </button>
     <button onclick="mbnSwitch('calendar',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
       <span style="font-size:22px">🗓️</span>التقويم
     </button>
     <button onclick="mbnSwitch('timetable',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
       <span style="font-size:22px">🕐</span>جدول الحصص
-    </button>
-    <button onclick="mbnSwitch('waitlist',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">⏳</span>قائمة الانتظار
-    </button>
-    <button onclick="mbnSwitch('pending',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🕐</span>طلبات المعلمين
     </button>
     <button onclick="mbnSwitch('archive',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:#C64B3C14;border:1px solid #C64B3C33;color:#C64B3C;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
       <span style="font-size:22px">🗂️</span>الأرشيف
@@ -2588,7 +2543,7 @@ function isSessionDoneToday(sid,date){ return db.attendance.some(a=>a.sid===sid&
 function isSessionPostponed(sid,date){ return db.attendance.some(a=>a.sid===sid&&a.date===date&&a.status==='مؤجل'); }
 function quickMarkAttend(sid,date){ const s=db.students.find(x=>x.id===sid);if(!s)return; const idx=db.attendance.findIndex(a=>a.sid===sid&&a.date===date); const keepId=idx>=0?db.attendance[idx].id:genAttId(); const r={id:keepId,sid,date,status:'حاضر',teacherId:s.teacherId||null,note:''}; if(idx>=0)db.attendance[idx]=r;else db.attendance.push(r); saveDB();toast('✅ تم تسجيل حضور '+s.name); }
 function postponeSession(sid,date){ const s=db.students.find(x=>x.id===sid);if(!s)return; const idx=db.attendance.findIndex(a=>a.sid===sid&&a.date===date); const keepId=idx>=0?db.attendance[idx].id:genAttId(); const r={id:keepId,sid,date,status:'مؤجل',teacherId:s.teacherId||null,note:'تأجيل'}; if(idx>=0)db.attendance[idx]=r;else db.attendance.push(r); saveDB();toast('⏸ تأجيل حصة '+s.name); }
-function openSlotActions(sid,date){ const s=db.students.find(x=>x.id===sid);if(!s)return; const ph=(s.phone||'').replace(/\D/g,''); window._ss={sid,date}; openModal('<div class="modal-head"><h3>📅 '+escapeHtml(s.name)+'</h3><button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button></div><div class="modal-body"><div style="display:flex;flex-direction:column;gap:8px"><button class="btn btn-green" style="justify-content:center;padding:13px" onclick="quickMarkAttend(window._ss.sid,window._ss.date);closeModal();renderSchedule&&renderSchedule()">✅ تسجيل حاضر</button><button class="btn" style="background:#B8892B14;color:#E9D8AE;border:1px solid #B8892B44;justify-content:center;padding:13px" onclick="postponeSession(window._ss.sid,window._ss.date);closeModal();renderSchedule&&renderSchedule()">⏸ تأجيل</button><button class="btn btn-blue" style="justify-content:center;padding:13px" onclick="closeModal();openStudentProfile(window._ss.sid)">👁️ الملف الشخصي</button>'+(ph?'<a href="https://wa.me/'+ph+'" target="_blank" class="btn btn-wa" style="justify-content:center;padding:13px;text-decoration:none">💬 واتساب</a>':'')+'</div></div>'); }
+function openSlotActions(sid,date){ const s=db.students.find(x=>x.id===sid);if(!s)return; const ph=(s.phone||'').replace(/\D/g,''); window._ss={sid,date}; openModal('<div class="modal-head"><h3>📅 '+escapeHtml(s.name)+'</h3><button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button></div><div class="modal-body"><div style="display:flex;flex-direction:column;gap:8px"><button class="btn btn-green" style="justify-content:center;padding:13px" onclick="quickMarkAttend(window._ss.sid,window._ss.date);closeModal();renderSchedule&&renderSchedule()">✅ تسجيل حاضر</button><button class="btn" style="background:#B8892B14;color:#9C7223;border:1px solid #B8892B44;justify-content:center;padding:13px" onclick="postponeSession(window._ss.sid,window._ss.date);closeModal();renderSchedule&&renderSchedule()">⏸ تأجيل</button><button class="btn btn-blue" style="justify-content:center;padding:13px" onclick="closeModal();openStudentProfile(window._ss.sid)">👁️ الملف الشخصي</button>'+(ph?'<a href="https://wa.me/'+ph+'" target="_blank" class="btn btn-wa" style="justify-content:center;padding:13px;text-decoration:none">💬 واتساب</a>':'')+'</div></div>'); }
 function v23sMarkAllPresent(date){ if(!confirm2('تسجيل الكل حاضرين؟')) return; const d=new Date(date+'T00:00:00').getDay(); getStudentsForDay(d).forEach(s=>{if(!isSessionDoneToday(s.id,date)) db.attendance.push({id:genAttId(),sid:s.id,date,status:'حاضر',teacherId:s.teacherId||null,note:''});}); saveDB();toast('✅ تم تسجيل الحضور');renderSchedule&&renderSchedule(); }
 function exportSchedulePDF(){ const AN=db.settings?.academyName||'أكاديمية الأرقم'; const rows=DAY_NAMES.map((d,i)=>{const s=getStudentsForDay(i);return'<tr><td style="padding:8px 12px;border:1px solid #e5e7eb;font-weight:700">'+d+'</td><td style="padding:8px 12px;border:1px solid #e5e7eb">'+(s.length?s.map(x=>x.name).join('، '):'—')+'</td></tr>';}).join(''); const w=window.open('','_blank'); if(w){w.document.write('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;direction:rtl;padding:20px}table{width:100%;border-collapse:collapse}th{background:#0A4F42;color:#fff;padding:8px 12px;text-align:right}</style></head><body><h2>'+AN+' — الجدول الأسبوعي</h2><table><tr><th>اليوم</th><th>الطلاب</th></tr>'+rows+'</table><script>window.onload=()=>window.print()<\/script></body></html>');w.document.close();} }
 function sendDailyScheduleWA(){ const i=new Date().getDay(); const s=getStudentsForDay(i); if(!s.length){toast('لا توجد حصص اليوم','error');return;} const msg=encodeURIComponent(DAY_NAMES[i]+'\n'+s.map((x,j)=>(j+1)+'. '+x.name).join('\n')); const ph=(db.settings?.whatsapp||db.settings?.phone||'').replace(/\D/g,''); if(ph)window.open('https://wa.me/'+ph+'?text='+msg,'_blank'); else{navigator.clipboard?.writeText(decodeURIComponent(msg));toast('✅ تم النسخ');} }
@@ -2997,8 +2952,6 @@ function setupUI(){
     `;
   }
   document.getElementById('topDate').textContent=new Date().toLocaleDateString("ar-EG",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-  // Update pending badge for admin after nav is built
-  if(isAdmin()) setTimeout(updatePendingBadge, 50);
 
   // ── تحديث قائمة "المزيد" على الموبايل حسب الدور ──
   const moreAdminSec = document.getElementById('mobileMoreAdminSection');
@@ -3030,9 +2983,6 @@ function setupUI(){
   window.addEventListener('storage', function(e){
     if(!e.key || !e.key.includes('arqam')) return;
     loadDB();
-    if(isAdmin()){
-      if(currentTab === 'pending') renderPendingApprovals();
-    }
   });
 }
 
@@ -3223,7 +3173,7 @@ function getTeacherStudents(teacherId){
 // UI HELPERS
 // ═══════════════════════════════════════════════════════════════
 function badge(status){
-  if(status==='غائب_بلاعذر') return`<span class="badge" style="background:#431407;color:#C08A1E;border:1px solid #EA580C55">🚫 غياب بلا عذر</span>`;
+  if(status==='غائب_بلاعذر') return`<span class="badge" style="background:#C08A1E16;color:#C08A1E;border:1px solid #C08A1E55">🚫 غياب بلا عذر</span>`;
   const map={"نشط":"green","حاضر":"green","مدفوع":"green","منتهي":"red","غائب":"red","متأخر":"red","جزئي":"gold","لا يوجد":"gray","نشط_معلم":"blue","مدير":"purple"};
   return`<span class="badge ${map[status]||'gray'}">${status}</span>`;
 }
@@ -3242,7 +3192,7 @@ function openModal(html){
   o.style.display="flex";
 }
 function confirm2(msg){return window.confirm(msg)}
-const TITLES={dashboard:"لوحة التحكم",students:"إدارة الطلاب",attendance:"سجل الحضور",payments:"المدفوعات",teachers:"إدارة المعلمين",packages:"إدارة الباقات",reports:"التقارير",settings:"الإعدادات","my-students":"طلابي","my-sessions":"سجل حصصي",broadcast:"رسالة جماعية",reminders:"التذكيرات الذكية",schedule:"جدول المواعيد",expenses:"المصاريف والربح",waitlist:"قائمة الانتظار",discounts:"الخصومات",exams:"التقييم والاختبارات",pending:"طلبات المعلمين"};
+const TITLES={dashboard:"لوحة التحكم",students:"إدارة الطلاب",attendance:"سجل الحضور",payments:"المدفوعات",teachers:"إدارة المعلمين",packages:"إدارة الباقات",reports:"التقارير",settings:"الإعدادات","my-students":"طلابي","my-sessions":"سجل حصصي",broadcast:"رسالة جماعية",reminders:"التذكيرات الذكية",schedule:"جدول المواعيد",expenses:"المصاريف والربح"};
 
 // ═══════════════════════════════════════════════════════════════
 // TABS
@@ -3323,231 +3273,6 @@ function refreshCurrentTab(){
 //   clearTimeout(window._resizeTimer);
 //   window._resizeTimer=setTimeout(()=>renderTab(currentTab),200);
 // });
-// ══════════════════════════════════════════════════════════════════
-// ⏳ WAITLIST MODULE — قائمة الانتظار
-// ══════════════════════════════════════════════════════════════════
-
-function renderWaitlist(){/* removed */}
-
-function openAddWaitlist(){
-  openModal(`
-    <div class="modal-head">
-      <h3>⏳ إضافة لقائمة الانتظار</h3>
-      <button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label>الاسم *</label><input id="wl_name" placeholder="اسم المهتم"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-group" style="margin:0"><label>رقم الهاتف</label><input id="wl_phone" type="tel" placeholder="05xxxxxxxx"></div>
-        <div class="form-group" style="margin:0"><label>العمر</label><input id="wl_age" type="number" placeholder="10"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
-        <div class="form-group" style="margin:0"><label>المصدر</label>
-          <select id="wl_source"><option>واتساب</option><option>إعلان</option><option>توصية</option><option>موقع</option><option>أخرى</option></select>
-        </div>
-        <div class="form-group" style="margin:0"><label>الحالة</label>
-          <select id="wl_status"><option>جديد</option><option>مهتم</option><option>متردد</option></select>
-        </div>
-      </div>
-      <div class="form-group" style="margin-top:12px"><label>ملاحظات</label><input id="wl_notes" placeholder="أي تفاصيل إضافية..."></div>
-      <div class="modal-btns">
-        <button class="btn btn-gold" style="flex:1;justify-content:center" onclick="saveWaitlist()">💾 حفظ</button>
-        <button class="btn btn-gray" onclick="closeModal()">إلغاء</button>
-      </div>
-    </div>`);
-}
-
-function saveWaitlist(){
-  const name=(document.getElementById('wl_name')?.value||'').trim();
-  if(!name){toast('أدخل الاسم','error');return;}
-  if(!db.waitlist)db.waitlist=[];
-  const mx=db.waitlist.length?Math.max(0,...db.waitlist.map(w=>+w.id||0)):0;
-  db.waitlist.push({id:mx+1,name,phone:document.getElementById('wl_phone')?.value||'',
-    age:document.getElementById('wl_age')?.value||'',
-    source:document.getElementById('wl_source')?.value||'أخرى',
-    status:document.getElementById('wl_status')?.value||'جديد',
-    notes:document.getElementById('wl_notes')?.value||'',
-    date:new Date().toISOString().slice(0,10)});
-  saveDB();closeModal();toast('✅ تمت الإضافة لقائمة الانتظار','success');renderWaitlist();
-}
-
-function updateWaitlistStatus(id,status){
-  const w=(db.waitlist||[]).find(x=>x.id==id);
-  if(w){w.status=status;saveDB();toast(`تم تحديث الحالة: ${status}`);}
-}
-
-function deleteWaitlist(id){
-  if(!confirm2('حذف من قائمة الانتظار؟'))return;
-  db.waitlist=(db.waitlist||[]).filter(w=>w.id!=id);
-  saveDB();toast('تم الحذف');renderWaitlist();
-}
-
-function convertToStudent(wlId){
-  const w=(db.waitlist||[]).find(x=>x.id==wlId);
-  if(!w)return;
-  if(!confirm2(`تحويل "${w.name}" إلى طالب مسجّل؟`))return;
-  // Pre-fill student form with waitlist data
-  closeModal();
-  showTab('students');
-  setTimeout(()=>{
-    openAddStudent();
-    setTimeout(()=>{
-      const nameEl=document.getElementById('m_name');
-      const phoneEl=document.getElementById('m_phone');
-      if(nameEl) nameEl.value=w.name;
-      if(phoneEl) phoneEl.value=w.phone||'';
-      // Mark as converted
-      w.status='مسجّل';
-      w.convertedAt=new Date().toISOString();
-      saveDB();
-      toast(`✅ تم نقل بيانات "${w.name}" لنموذج التسجيل`,'success');
-    },300);
-  },200);
-}
-
-// ══════════════════════════════════════════════════════════════════
-// 🎁 DISCOUNTS MODULE — الخصومات
-// ══════════════════════════════════════════════════════════════════
-
-function renderDiscounts(){/* removed */}
-
-function openAddDiscount(){
-  const cur=db.settings?.currency||'ج.م';
-  const stuOpts=`<option value="">— لجميع الطلاب —</option>`+
-    db.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  openModal(`
-    <div class="modal-head">
-      <h3>🎁 إضافة خصم</h3>
-      <button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label>الطالب</label><select id="dis_sid">${stuOpts}</select></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-group" style="margin:0"><label>نوع الخصم</label>
-          <select id="dis_type" onchange="document.getElementById('dis_unit').textContent=this.value==='fixed'?'${cur}':'%'">
-            <option value="fixed">مبلغ ثابت</option>
-            <option value="percent">نسبة مئوية</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin:0"><label>القيمة <span id="dis_unit">${cur}</span></label>
-          <input id="dis_val" type="number" placeholder="0">
-        </div>
-      </div>
-      <div class="form-group" style="margin-top:12px"><label>السبب</label>
-        <select id="dis_reason">
-          <option>خصم عائلي</option><option>طالب مميز</option><option>صديق موظف</option>
-          <option>حالة اجتماعية</option><option>حافز انتظام</option><option>أخرى</option>
-        </select>
-      </div>
-      <div class="form-group"><label>التاريخ</label><input id="dis_date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-      <div class="modal-btns">
-        <button class="btn" style="background:linear-gradient(135deg,#0F6E5C,#0A4F42);color:#fff;flex:1;justify-content:center" onclick="saveDiscount()">💾 حفظ الخصم</button>
-        <button class="btn btn-gray" onclick="closeModal()">إلغاء</button>
-      </div>
-    </div>`);
-}
-
-function saveDiscount(){
-  const val=parseFloat(document.getElementById('dis_val')?.value)||0;
-  if(val<=0){toast('أدخل قيمة صحيحة','error');return;}
-  if(!db.discounts)db.discounts=[];
-  const mx=db.discounts.length?Math.max(0,...db.discounts.map(d=>+d.id||0)):0;
-  const sid=document.getElementById('dis_sid')?.value||'';
-  db.discounts.push({id:mx+1,sid,type:document.getElementById('dis_type')?.value||'fixed',
-    value:val,reason:document.getElementById('dis_reason')?.value||'أخرى',
-    date:document.getElementById('dis_date')?.value||new Date().toISOString().slice(0,10),
-    by:currentUser?.name||'الإدارة'});
-  // Apply discount to payment if student selected
-  if(sid){
-    const stu=db.students.find(s=>s.id===sid);
-    const type=document.getElementById('dis_type')?.value;
-    const discountAmt=type==='fixed'?val:Math.round((stu?.pkg||0)*val/100);
-    if(stu&&discountAmt>0){
-      const pay=db.payments.find(p=>p.sid===sid&&p.paid<p.required);
-      if(pay){pay.required=Math.max(0,pay.required-discountAmt);}
-    }
-  }
-  saveDB();closeModal();toast('✅ تم تسجيل الخصم','success');
-  renderDiscounts();
-}
-
-function deleteDiscount(id){
-  if(!confirm2('حذف هذا الخصم؟'))return;
-  db.discounts=(db.discounts||[]).filter(d=>d.id!=id);
-  saveDB();toast('تم الحذف');renderDiscounts();
-}
-
-// ══════════════════════════════════════════════════════════════════
-// 📝 EXAMS MODULE — التقييم والاختبارات
-// ══════════════════════════════════════════════════════════════════
-
-const EXAM_GRADES=[
-  {min:90,label:'ممتاز',color:'#0F6E5C',bg:'#0F6E5C14'},
-  {min:75,label:'جيد جداً',color:'#2A6F97',bg:'#EFEAE0'},
-  {min:60,label:'جيد',color:'#B8892B',bg:'#B8892B16'},
-  {min:50,label:'مقبول',color:'#C08A1E',bg:'#431407'},
-  {min:0, label:'ضعيف',color:'#C64B3C',bg:'#C64B3C14'},
-];
-function getGrade(score){return EXAM_GRADES.find(g=>score>=g.min)||EXAM_GRADES[EXAM_GRADES.length-1];}
-
-function renderExams(){/* removed */}
-
-function openAddExam(){
-  const stuOpts=db.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  const examNames=[...new Set((db.exams||[]).map(e=>e.examName))];
-  const examOpts=examNames.map(e=>`<option>${e}</option>`).join('');
-  openModal(`
-    <div class="modal-head">
-      <h3>📝 إضافة نتيجة اختبار</h3>
-      <button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label>الطالب *</label><select id="ex_sid"><option value="">— اختر —</option>${stuOpts}</select></div>
-      <div class="form-group"><label>اسم الاختبار *</label>
-        <input id="ex_name" list="ex_names_list" placeholder="مثال: اختبار التجويد الشهري">
-        <datalist id="ex_names_list">${examOpts}</datalist>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-group" style="margin:0"><label>الدرجة *</label><input id="ex_score" type="number" min="0" max="100" placeholder="85"></div>
-        <div class="form-group" style="margin:0"><label>من (المجموع)</label><input id="ex_total" type="number" placeholder="100" value="100"></div>
-      </div>
-      <div class="form-group" style="margin-top:12px"><label>التاريخ</label><input id="ex_date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
-      <div class="form-group"><label>ملاحظة المعلم</label><input id="ex_notes" placeholder="اختياري"></div>
-      <div class="modal-btns">
-        <button class="btn btn-green" style="flex:1;justify-content:center" onclick="saveExam()">💾 حفظ النتيجة</button>
-        <button class="btn btn-gray" onclick="closeModal()">إلغاء</button>
-      </div>
-    </div>`);
-}
-
-function saveExam(){
-  const sid=document.getElementById('ex_sid')?.value;
-  const name=(document.getElementById('ex_name')?.value||'').trim();
-  const score=parseFloat(document.getElementById('ex_score')?.value);
-  if(!sid||!name||isNaN(score)){toast('يرجى ملء الحقول الإلزامية','error');return;}
-  if(!db.exams)db.exams=[];
-  const mx=db.exams.length?Math.max(0,...db.exams.map(e=>+e.id||0)):0;
-  const total=parseFloat(document.getElementById('ex_total')?.value)||100;
-  const normalizedScore=Math.round(score/total*100);
-  db.exams.push({id:mx+1,sid,examName:name,score:normalizedScore,rawScore:score,total,
-    date:document.getElementById('ex_date')?.value||new Date().toISOString().slice(0,10),
-    notes:document.getElementById('ex_notes')?.value||'',
-    by:currentUser?.name||'الإدارة',at:new Date().toISOString()});
-  const g=getGrade(normalizedScore);
-  saveDB();closeModal();
-  toast(`✅ ${g.label} — ${normalizedScore}%`,'success');
-  renderExams();
-}
-
-function deleteExam(id){
-  if(!confirm2('حذف هذه النتيجة؟'))return;
-  db.exams=(db.exams||[]).filter(e=>e.id!=id);
-  saveDB();toast('تم الحذف');renderExams();
-}
-
-
-
-
 // ══════════════════════════════════════════════════════════════════
 // 💸 EXPENSES MODULE
 // ══════════════════════════════════════════════════════════════════
@@ -3682,7 +3407,7 @@ function renderExpenses(){
       <div style="font-size:18px;font-weight:900;color:#8B6F47">${totalSalaries.toLocaleString()}</div>
       <div style="font-size:9px;color:#6B7570;margin-top:3px">👨‍🏫 الرواتب</div>
     </div>
-    <div style="background:var(--surface);border:1px solid #EA580C33;border-radius:14px;padding:12px;text-align:center;border-top:2px solid #C08A1E">
+    <div style="background:var(--surface);border:1px solid #C08A1E33;border-radius:14px;padding:12px;text-align:center;border-top:2px solid #C08A1E">
       <div style="font-size:18px;font-weight:900;color:#C08A1E">${totalExpenses.toLocaleString()}</div>
       <div style="font-size:9px;color:#6B7570;margin-top:3px">💸 المصاريف</div>
     </div>
@@ -3769,50 +3494,6 @@ function _commitAttendance({sid,date,status,note,teacherId,deducted}){
 // ══════════════════════════════════════════════════════════════════
 // ⏳ PENDING APPROVALS — طلبات الموافقة من المعلمين
 // ══════════════════════════════════════════════════════════════════
-
-function updatePendingBadge(){
-  /* removed — badge no longer in nav */
-}
-
-function renderPendingApprovals(){/* removed */}
-
-function approveRequest(id){
-  const p=(db.pendingApprovals||[]).find(x=>x.id==id);
-  if(!p||p.approvalStatus!=='pending') return;
-
-  // سجّل الموافقة أولاً
-  p.approvalStatus='approved';
-  p.approvedAt=new Date().toISOString();
-  p.approvedBy=currentUser.name;
-
-  if(p.type==='attendance'){
-    _commitAttendance({sid:p.sid,date:p.date,status:p.status,note:p.note,teacherId:p.teacherId});
-  } else if(p.type==='quranNote'){
-    const s=db.students.find(x=>x.id===p.sid);
-    if(s){
-      if(!s.quranNotes)s.quranNotes=[];
-      s.quranNotes.unshift(p.note);
-      s.quranLastUpdate=p.note.date;
-      saveDB();
-      toast(`✅ تم تطبيق تقييم "${p.studentName}" من ${p.teacherName}`,'success');
-    }
-  }
-
-  saveDB();
-  renderPendingApprovals();
-}
-
-function rejectRequest(id){
-  const p=(db.pendingApprovals||[]).find(x=>x.id==id);
-  if(!p||p.approvalStatus!=='pending') return;
-  if(!confirm2(`رفض طلب "${p.teacherName}" الخاص بـ "${p.studentName}"؟`)) return;
-  p.approvalStatus='rejected';
-  p.rejectedAt=new Date().toISOString();
-  p.rejectedBy=currentUser.name;
-  saveDB();
-  toast(`تم رفض الطلب`,'error');
-  renderPendingApprovals();
-}
 
 function renderTab(tab){
   if(tab==="dashboard")renderDashboard();
@@ -4311,10 +3992,10 @@ function renderStudents(search){
     const remBg=rem===0?'#C64B3C14':rem<=3?'#B8892B16':'#0F6E5C14';
     const psColor=ps==='مدفوع'?'#0F6E5C':ps==='جزئي'?'#B8892B':'#C64B3C';
     const psBg=ps==='مدفوع'?'#0F6E5C14':ps==='جزئي'?'#B8892B16':'#C64B3C14';
-    return`<div style="background:var(--surface);border:1px solid ${rem===0?'#C64B3C33':rem<=3?'#B8892B33':'var(--border)'};border-radius:16px;padding:14px;margin-bottom:10px;transition:all .2s" onclick="openStudentProfile('${s.id}')">
+    return`<div style="background:var(--surface);border:1px solid ${rem===0?'#C64B3C33':rem<=3?'#B8892B33':'var(--border)'};border-radius:16px;padding:14px;margin-bottom:10px;transition:all .2s;box-shadow:0 1px 3px rgba(31,42,36,.04)" onclick="openStudentProfile('${s.id}')">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0A4F4222,#9C722322);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1px solid var(--border)">
-          ${isPaused?'⏸':rem===0?'🔴':rem<=3?'⚠️':'📚'}
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0F6E5C,#0A4F42);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0;font-family:'Amiri',serif;box-shadow:0 2px 8px rgba(15,110,92,.25)">
+          ${(s.name||'؟').trim().slice(0,2)}
         </div>
         <div style="flex:1;min-width:0">
           <div style="font-size:15px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
@@ -4363,7 +4044,10 @@ function renderStudents(search){
     return`<tr>
       <td><span class="code">${s.id}</span></td>
       <td style="font-weight:700">
-        <button onclick="openStudentProfile('${s.id}')" style="background:transparent;border:none;color:#2A6F97;cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;padding:0;text-decoration:underline dotted">${s.name}</button>
+        <button onclick="openStudentProfile('${s.id}')" style="background:transparent;border:none;color:#2A6F97;cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;padding:0;display:flex;align-items:center;gap:8px">
+          <span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0F6E5C,#0A4F42);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;flex-shrink:0;font-family:'Amiri',serif">${(s.name||'؟').trim().slice(0,2)}</span>
+          <span style="text-decoration:underline dotted">${s.name}</span>
+        </button>
       </td>
       <td style="color:#6B7570">${s.phone||'—'}</td>
       <td style="color:#6B7570;font-size:11px">${s.parentPhone||'—'}</td>
@@ -4878,7 +4562,7 @@ function renderAttendance(){
   // ── بناء بطاقات السجلات ──
   function statusInfo(status){
     if(status==='حاضر')        return {icon:'✅',color:'#0F6E5C',bg:'#0F6E5C14',border:'#0A4F4233',label:'حاضر'};
-    if(status==='غائب_بلاعذر') return {icon:'🚫',color:'#C08A1E',bg:'#431407',border:'#EA580C33',label:'غياب بلا عذر'};
+    if(status==='غائب_بلاعذر') return {icon:'🚫',color:'#C08A1E',bg:'#C08A1E16',border:'#C08A1E33',label:'غياب بلا عذر'};
     return                            {icon:'❌',color:'#C64B3C',bg:'#C64B3C14',border:'#C64B3C33',label:'غائب بعذر'};
   }
 
@@ -4947,7 +4631,7 @@ function renderAttendance(){
       <div style="font-size:22px;font-weight:900;color:#C64B3C">${totalAbsent}</div>
       <div style="font-size:10px;color:var(--muted);margin-top:2px">❌ غياب</div>
     </div>
-    <div style="background:var(--surface);border:1px solid #EA580C33;border-radius:14px;padding:12px;text-align:center;border-top:2px solid #C08A1E">
+    <div style="background:var(--surface);border:1px solid #C08A1E33;border-radius:14px;padding:12px;text-align:center;border-top:2px solid #C08A1E">
       <div style="font-size:22px;font-weight:900;color:#C08A1E">${totalUnexcused}</div>
       <div style="font-size:10px;color:var(--muted);margin-top:2px">🚫 بلا عذر</div>
     </div>
@@ -5072,7 +4756,7 @@ function _renderAttRecords(){
 
   function statusInfo(status){
     if(status==='حاضر')        return {icon:'✅',color:'#0F6E5C',bg:'#0F6E5C14',border:'#0A4F4233',label:'حاضر'};
-    if(status==='غائب_بلاعذر') return {icon:'🚫',color:'#C08A1E',bg:'#431407',border:'#EA580C33',label:'غياب بلا عذر'};
+    if(status==='غائب_بلاعذر') return {icon:'🚫',color:'#C08A1E',bg:'#C08A1E16',border:'#C08A1E33',label:'غياب بلا عذر'};
     return                            {icon:'❌',color:'#C64B3C',bg:'#C64B3C14',border:'#C64B3C33',label:'غائب بعذر'};
   }
 
@@ -5633,7 +5317,10 @@ function renderPayments(){
     return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:background .15s;active:background:#E7E2D6" onclick="openPayActionsSheet(${p.id})">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px">
         <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-          <div style="width:42px;height:42px;border-radius:12px;background:${statusBg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${statusEmoji}</div>
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0F6E5C,#0A4F42);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;font-family:'Amiri',serif;flex-shrink:0;position:relative">
+            ${(stu?.name||'؟').trim().slice(0,2)}
+            <span style="position:absolute;bottom:-2px;left:-2px;width:18px;height:18px;border-radius:50%;background:${statusBg};border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px">${statusEmoji}</span>
+          </div>
           <div style="flex:1;min-width:0">
             <div style="font-size:15px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${stu?stu.name:"–"}</div>
             <div style="font-size:11px;color:var(--muted);margin-top:2px">${p.sid} &nbsp;·&nbsp; ${p.month}</div>
@@ -5798,7 +5485,7 @@ function openEditPay(payId){
       <button onclick="closeModal()" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer">✕</button>
     </div>
     <div class="modal-body">
-      <div style="background:#B8892B44;border:1px solid #B8892B44;border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#E9D8AE;line-height:1.7">
+      <div style="background:#B8892B44;border:1px solid #B8892B44;border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#9C7223;line-height:1.7">
         ⚠️ <strong>تعديل دفعة للطالب:</strong> ${stu?stu.name:p.sid}<br>
         <span style="font-size:11px;color:#6B7570">الشهر: ${p.month} &nbsp;|&nbsp; المسجّل: ${p.paid.toLocaleString()} ${cur} &nbsp;|&nbsp; المطلوب: ${p.required.toLocaleString()} ${cur}</span>
       </div>
@@ -6209,193 +5896,72 @@ function renderTeachers(){
     const rating=getTeacherRating(t.id);
     const todayStr=now.toISOString().slice(0,10);
     const todaySess=db.attendance.filter(a=>a.teacherId===t.id&&a.date===todayStr);
-    const todayPresent=todaySess.filter(a=>a.status==='حاضر').length;
-    const totalEarned=getTeacherTotalEarned(t.id);
     const initials=t.name.split(' ').slice(0,2).map(w=>w[0]).join('');
-    const hasAccount=!!db.users.find(u=>u.teacherId===t.id);
-    const joinDate=t.joinDate||null;
     const nearEndStudents=assignedStudents.filter(s=>getRemaining(s)<=3&&getRemaining(s)>0);
     const finishedStudents=assignedStudents.filter(s=>getRemaining(s)===0);
-
-    // Last 6 months chart
-    const last6=[];
-    for(let i=5;i>=0;i--){
-      const d=new Date();d.setMonth(d.getMonth()-i);
-      const mk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-      last6.push({lbl:MONTHS[d.getMonth()].slice(0,3),sess:getTeacherSessionsByMonth(t.id,mk),mk});
-    }
-    const maxS=Math.max(...last6.map(x=>x.sess),1);
-    const chartBars=last6.map((x,i)=>`
-      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;cursor:default" title="${x.lbl}: ${x.sess} حصة">
-        <div style="font-size:9px;color:${x.sess>0?'#8B6F47':'#EFEAE0'};font-weight:700">${x.sess||''}</div>
-        <div style="width:100%;height:${Math.max(Math.round(x.sess/maxS*50),2)}px;background:${i===5?'linear-gradient(180deg,#8B6F47,#0F6E5C)':'linear-gradient(180deg,#EFEAE0,#E7E2D6)'};border-radius:3px 3px 0 0;transition:height .5s"></div>
-        <div style="font-size:9px;color:${i===5?'#8B6F47':'#6B7570'}">${x.lbl}</div>
-      </div>`).join('');
 
     // Salary progress bar color
     const salaryColor=salaryPct>=100?'#0F6E5C':salaryPct>=50?'#B8892B':'#C64B3C';
 
-    // History (last 4)
-    const histKeys=t.monthlyRecords?Object.keys(t.monthlyRecords).sort().reverse().slice(0,4):[];
-    const allHistSess=histKeys.map(k=>getTeacherSessionsByMonth(t.id,k));
-    const maxHistSess=Math.max(...allHistSess,1);
-    const histRows=histKeys.map(k=>{
-      const h=t.monthlyRecords[k];
-      const [y,m]=k.split('-');
-      const mLabel=`${MONTHS[parseInt(m)-1]} ${y}`;
-      const due=getTeacherDueForRecords(t.id,k);
-      const paid=h.paid||0;
-      const pct=Math.max(Math.round(getTeacherSessionsByMonth(t.id,k)/maxHistSess*100),0);
-      return`<div class="t38-history-item">
-        <div class="t38-history-month">${mLabel}</div>
-        <div class="t38-history-bar-wrap"><div class="t38-history-bar-fill" style="width:${pct}%"></div></div>
-        <div class="t38-history-val">${getTeacherSessionsByMonth(t.id,k)} حصة</div>
-        <div class="t38-history-paid" style="color:${paid>=due?'#0F6E5C':'#B8892B'}">${paid.toLocaleString()} ${cur}</div>
-        <button class="btn btn-gray" style="padding:3px 9px;font-size:10px" onclick="openTeacherInvoice('${t.id}','${k}')">🧾</button>
-      </div>`;
-    }).join('')||`<div style="color:#9CA39D;font-size:12px;text-align:center;padding:12px">لا يوجد سجل سابق</div>`;
+    return`<div class="teacher-card-compact" onclick="openTeacherProfile('${t.id}')">
 
-    // Student chips
-    const stuChips=assignedStudents.length
-      ?assignedStudents.map(s=>{
-          const rem=getRemaining(s);
-          const cls=rem===0?'danger':rem<=3?'warn':'';
-          return`<span class="t38-stu-chip ${cls}">${s.name}${rem<=3?' ⚠️':''}</span>`;
-        }).join('')
-      :`<span style="color:#9CA39D;font-size:12px">لم يُسند له طلاب بعد</span>`;
-
-    return`<div class="teacher-card">
-
-      <!-- ── Top Header ── -->
-      <div class="teacher-card-top">
-        <div class="t38-avatar">
+      <!-- ── Row 1: Avatar + Name + Quick Actions ── -->
+      <div class="tcc-top">
+        <div class="t38-avatar tcc-avatar">
           <span class="t38-avatar-initials">${initials}</span>
           ${todaySess.length?'<div class="t38-online-dot"></div>':''}
         </div>
-        <div class="t38-teacher-info">
-          <div class="t38-teacher-name">${t.name}</div>
-          <div class="t38-teacher-meta">
-            ${t.subject||'معلم قرآن'} &nbsp;•&nbsp; ${t.ratePerSession} ${cur}/حصة
-            ${t.phone?`&nbsp;•&nbsp;<a href="https://wa.me/${t.phone.replace(/\D/g,'')}" target="_blank" style="color:#25D366;text-decoration:none">💬 ${t.phone}</a>`:''}
-            ${joinDate?`&nbsp;•&nbsp;<span style="color:#6B7570">منذ ${joinDate}</span>`:''}
-          </div>
-          <div class="t38-rating" style="margin-top:6px">${renderStars(rating)}</div>
-          <div class="t38-perf-bar" style="margin-top:6px;width:140px">
-            <div class="t38-perf-fill" style="width:${attRate}%;background:${attRate>=80?'#0F6E5C':attRate>=50?'#B8892B':'#C64B3C'}"></div>
-          </div>
-          <div style="font-size:10px;color:#6B7570;margin-top:3px">معدل الحضور: ${attRate}%</div>
+        <div class="tcc-info">
+          <div class="tcc-name">${t.name}</div>
+          <div class="tcc-meta">${t.subject||'معلم قرآن'} &nbsp;·&nbsp; ${t.ratePerSession} ${cur}/حصة</div>
+          <div class="tcc-rating">${renderStars(rating)} <span style="color:#9CA39D;font-size:10px">(${attRate}% حضور)</span></div>
         </div>
-        <div class="t38-top-actions">
-          <span class="month-badge">${monthLabel}</span>
-          <button class="btn btn-purple" style="padding:7px 12px;font-size:12px" onclick="openAssignStudents('${t.id}')">👥 تعيين</button>
-          <button class="btn btn-blue" style="padding:7px 12px;font-size:12px" onclick="openTeacherProfile('${t.id}')">👤 الملف</button>
+        <div class="tcc-actions" onclick="event.stopPropagation()">
           <button class="btn-edit" onclick="openEditTeacher('${t.id}')" title="تعديل">✏️</button>
           <button class="btn-red" onclick="deleteTeacher('${t.id}')" title="حذف">🗑️</button>
         </div>
       </div>
 
-      <!-- ── Stats Row ── -->
-      <div class="teacher-stats">
-        <div class="teacher-stat">
-          <div class="teacher-stat-val" style="color:#2A6F97">${curSess}</div>
-          <div class="teacher-stat-lbl">حصص الشهر</div>
+      <!-- ── Row 2: Key Stats Grid ── -->
+      <div class="tcc-stats">
+        <div class="tcc-stat">
+          <div class="tcc-stat-val" style="color:#2A6F97">${curSess}</div>
+          <div class="tcc-stat-lbl">حصص الشهر</div>
         </div>
-        <div class="teacher-stat" style="cursor:pointer" onclick="openPayTeacher('${t.id}')">
-          <div class="teacher-stat-val" style="color:#B8892B">${totalDue.toLocaleString()}</div>
-          <div class="teacher-stat-lbl">المستحق ${cur}</div>
+        <div class="tcc-stat">
+          <div class="tcc-stat-val" style="color:#B8892B">${totalDue.toLocaleString()}</div>
+          <div class="tcc-stat-lbl">المستحق</div>
         </div>
-        <div class="teacher-stat">
-          <div class="teacher-stat-val" style="color:${remaining>0?'#C64B3C':'#0F6E5C'}">${remaining.toLocaleString()}</div>
-          <div class="teacher-stat-lbl">المتبقي ${cur}</div>
+        <div class="tcc-stat">
+          <div class="tcc-stat-val" style="color:${remaining>0?'#C64B3C':'#0F6E5C'}">${remaining.toLocaleString()}</div>
+          <div class="tcc-stat-lbl">المتبقي</div>
         </div>
-        <div class="teacher-stat" style="cursor:pointer" onclick="openAddSessionManual('${t.id}')">
-          <div class="teacher-stat-val" style="color:${todaySess.length?'#0F6E5C':'#9CA39D'}">${todayPresent}</div>
-          <div class="teacher-stat-lbl">حضور اليوم ➕</div>
+        <div class="tcc-stat">
+          <div class="tcc-stat-val" style="color:#8B6F47">${assignedStudents.length}</div>
+          <div class="tcc-stat-lbl">طالب</div>
         </div>
       </div>
 
-      <!-- ── Card Body ── -->
-      <div class="teacher-card-body">
-
-        <!-- Salary progress -->
-        <div class="t38-salary-block">
-          <div class="t38-salary-row">
-            <span style="color:var(--muted)">💰 تقدم صرف الراتب</span>
-            <span style="font-weight:900;color:${salaryColor}">${salaryPct}% &nbsp;(${paidThisMonth.toLocaleString()} / ${totalDue.toLocaleString()} ${cur})</span>
-          </div>
-          <div class="t38-salary-progress">
-            <div class="t38-salary-fill" style="width:${salaryPct}%;background:${salaryColor}"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--muted)">
-            <span>إجمالي مكتسب: <strong style="color:#8B6F47">${totalEarned.toLocaleString()} ${cur}</strong></span>
-            <span>${(rec?.payLog||[]).length} دفعة مسجّلة</span>
-          </div>
+      <!-- ── Row 3: Salary Progress ── -->
+      <div class="tcc-salary">
+        <div class="tcc-salary-row">
+          <span>💰 ${salaryPct}% من الراتب مصروف</span>
+          <span style="font-weight:900;color:${salaryColor}">${paidThisMonth.toLocaleString()} / ${totalDue.toLocaleString()} ${cur}</span>
         </div>
+        <div class="t38-salary-progress"><div class="t38-salary-fill" style="width:${salaryPct}%;background:${salaryColor}"></div></div>
+      </div>
 
-        <!-- Alerts -->
-        ${nearEndStudents.length?`<div style="background:#B8892B16;border:1px solid #B8892B44;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#B8892B">
-          ⚠️ <strong>${nearEndStudents.length} طلاب يوشكون على الانتهاء:</strong> ${nearEndStudents.map(s=>s.name).join(' — ')}
-        </div>`:''}
-        ${finishedStudents.length?`<div style="background:#C64B3C14;border:1px solid #C64B3C44;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#C64B3C">
-          🔴 <strong>${finishedStudents.length} طلاب انتهت حصصهم:</strong> ${finishedStudents.map(s=>s.name).join(' — ')}
-        </div>`:''}
+      ${(nearEndStudents.length||finishedStudents.length)?`
+      <div class="tcc-alerts">
+        ${finishedStudents.length?`<span class="tcc-alert-chip danger">🔴 ${finishedStudents.length} انتهت حصصهم</span>`:''}
+        ${nearEndStudents.length?`<span class="tcc-alert-chip warn">⚠️ ${nearEndStudents.length} يوشكون على الانتهاء</span>`:''}
+      </div>`:''}
 
-        <!-- Students -->
-        <div style="margin-bottom:16px">
-          <div style="font-size:11px;font-weight:700;color:#6B7570;margin-bottom:8px">👥 الطلاب المسندون (${assignedStudents.length})</div>
-          <div class="t38-stu-chips">${stuChips}</div>
-        </div>
-
-        <!-- 6-month chart -->
-        <div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:16px">
-          <div style="font-size:11px;color:#6B7570;margin-bottom:10px;font-weight:700">📊 الحصص — آخر 6 أشهر</div>
-          <div style="display:flex;gap:6px;align-items:flex-end;height:60px">${chartBars}</div>
-        </div>
-
-        <!-- Action buttons -->
-        <div class="t38-action-grid">
-          <button class="t38-action-btn" onclick="openAddSessionManual('${t.id}')">
-            <span class="t38-action-icon">➕</span>حصة فردية
-          </button>
-          <button class="t38-action-btn" onclick="openTeacherBulkAtt('${t.id}')">
-            <span class="t38-action-icon">✅</span>تسجيل جماعي
-          </button>
-          <button class="t38-action-btn" onclick="openPayTeacher('${t.id}')">
-            <span class="t38-action-icon">💵</span>دفع الراتب
-          </button>
-          <button class="t38-action-btn" onclick="openTeacherInvoice('${t.id}','${monthKey}')">
-            <span class="t38-action-icon">🧾</span>فاتورة
-          </button>
-          <button class="t38-action-btn" onclick="openRateTeacher('${t.id}')">
-            <span class="t38-action-icon">⭐</span>تقييم
-          </button>
-          <button class="t38-action-btn" onclick="openTeacherReminders('${t.id}')">
-            <span class="t38-action-icon">🔔</span>تذكيرات
-          </button>
-          <button class="t38-action-btn" onclick="sendTeacherScheduleWA('${t.id}')">
-            <span class="t38-action-icon">💬</span>جدول أسبوعي
-          </button>
-          <button class="t38-action-btn" onclick="sendTeacherDailyScheduleWA('${t.id}')">
-            <span class="t38-action-icon">📲</span>جدول اليوم
-          </button>
-          <button class="t38-action-btn" onclick="exportTeacherSchedulePDF('${t.id}')">
-            <span class="t38-action-icon">🖨️</span>PDF جدول
-          </button>
-        </div>
-
-        <!-- Account status -->
-        <div style="margin-top:12px;text-align:center">
-          ${hasAccount
-            ?`<span style="font-size:11px;color:#0F6E5C">🔒 لديه حساب دخول</span>`
-            :`<button class="btn" style="background:linear-gradient(135deg,#0F6E5C,#0A4F42);color:#fff;width:100%;justify-content:center;font-size:12px;padding:10px" onclick="openAddUserForTeacher('${t.id}')">🔐 إنشاء حساب دخول</button>`}
-        </div>
-
-        <!-- History -->
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-          <div style="font-size:11px;font-weight:700;color:#6B7570;margin-bottom:8px">📅 سجل الأشهر السابقة</div>
-          ${histRows}
-        </div>
-
+      <!-- ── Row 4: Quick Actions + View More ── -->
+      <div class="tcc-footer" onclick="event.stopPropagation()">
+        <button class="btn btn-purple" style="padding:8px 12px;font-size:12px" onclick="openAssignStudents('${t.id}')">👥 تعيين طلاب</button>
+        <button class="btn btn-green" style="padding:8px 12px;font-size:12px" onclick="openPayTeacher('${t.id}')">💵 دفع راتب</button>
+        <button class="btn btn-blue" style="padding:8px 12px;font-size:12px;margin-right:auto" onclick="openTeacherProfile('${t.id}')">👤 الملف الكامل ←</button>
       </div>
     </div>`;
   }).join(""):
@@ -6417,7 +5983,7 @@ function renderTeachers(){
         <button class="btn btn-green" onclick="openAddTeacher()">➕ إضافة معلم</button>
       </div>
     </div>
-    ${teachersHtml}`;
+    <div class="tcc-grid">${teachersHtml}</div>`;
 }
 
 /* ══════════════════════════════════════════════
@@ -7671,7 +7237,7 @@ function renderReports(){
   const totalPaid=db.payments.reduce((s,p)=>s+p.paid,0);
   const pct=totalReq?Math.round((totalPaid/totalReq)*100):0;
   const topStudents=[...db.students].sort((a,b)=>getAttended(b.id)-getAttended(a.id)).slice(0,5);
-  const rankColors=["#9C7223","#6B7570","#92400E","#6B7570","#EFEAE0"];
+  const rankColors=["#9C7223","#6B7570","#8B6F47","#2A6F97","#0F6E5C"];
   const rankRows=topStudents.map((s,i)=>`
     <div class="rank-item">
       <div class="rank-num" style="background:${rankColors[i]}">${i+1}</div>
@@ -7793,7 +7359,7 @@ function renderReports(){
     <div style="display:flex;align-items:center;gap:8px;padding:5px 0">
       <div style="width:10px;height:10px;border-radius:3px;background:${pkgColors[i%pkgColors.length]};flex-shrink:0"></div>
       <span style="font-size:12px;flex:1">${price} ${db.settings?.currency||'ج.م'}</span>
-      <span style="font-size:12px;font-weight:700;color:#fff">${count} طالب</span>
+      <span style="font-size:12px;font-weight:700;color:var(--text)">${count} طالب</span>
     </div>`).join('');
 
   const cur=db.settings?.currency||'ج.م';
@@ -8315,7 +7881,7 @@ function exportMySessionsPDF(){
     return`<div style="margin-bottom:28px;page-break-inside:avoid">
       <div style="background:#f0fdf4;border-right:4px solid #0A4F42;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
         <strong style="font-size:14px;color:#0A4F42">${mLabel}</strong>
-        <span style="font-size:12px;color:#EFEAE0">حاضر: ${present} | غائب: ${absent} | مستحق: ${earned.toLocaleString()} ${acad.currency||'ج.م'} | مدفوع: ${paid.toLocaleString()} ${acad.currency||'ج.م'}</span>
+        <span style="font-size:12px;color:#1F2A24">حاضر: ${present} | غائب: ${absent} | مستحق: ${earned.toLocaleString()} ${acad.currency||'ج.م'} | مدفوع: ${paid.toLocaleString()} ${acad.currency||'ج.م'}</span>
       </div>
       <table>
         <thead><tr><th>التاريخ</th><th>الطالب</th><th style="text-align:center">الحضور</th><th>ملاحظات</th></tr></thead>
@@ -8560,7 +8126,7 @@ function renderSettings(){
       <div style="margin-top:20px;background:linear-gradient(135deg,#B8892B14,#FFFFFF);border:1px solid #B8892B55;border-radius:16px;padding:20px">
         <div style="font-size:14px;font-weight:900;color:#B8892B;margin-bottom:6px">🔧 إصلاح رصيد الحصص</div>
         <div style="font-size:12px;color:#6B7570;margin-bottom:14px">تشخيص وإصلاح فوري لجميع الطلاب الذين لديهم رصيد خاطئ</div>
-        <button class="btn" onclick="openSessionFixTool()" style="background:#92400E;color:#E9D8AE;border:1px solid #B8892B;width:100%;justify-content:center;padding:12px;font-size:13px">
+        <button class="btn" onclick="openSessionFixTool()" style="background:#92400E;color:#9C7223;border:1px solid #B8892B;width:100%;justify-content:center;padding:12px;font-size:13px">
           🔍 فتح أداة التشخيص والإصلاح
         </button>
       </div>
@@ -8657,7 +8223,7 @@ function openSessionFixTool(){
       </div>
       <div style="background:#B8892B14;border-radius:12px;padding:12px;text-align:center">
         <div style="font-size:24px;font-weight:900;color:#B8892B">${rows.length}</div>
-        <div style="font-size:11px;color:#E9D8AE">إجمالي</div>
+        <div style="font-size:11px;color:#9C7223">إجمالي</div>
       </div>
     </div>
 
@@ -8697,7 +8263,7 @@ function openSessionFixTool(){
             <div style="background:#F0EDE3;border-radius:8px;padding:10px">
               <div style="font-size:10px;color:#6B7570;margin-bottom:4px">حصص الباقة</div>
               <input type="number" id="fix_sess_${r.s.id}" value="${r.sugSess}"
-                style="width:100%;background:transparent;border:none;color:#E9D8AE;font-size:18px;font-weight:900;font-family:'Cairo',sans-serif;outline:none"
+                style="width:100%;background:transparent;border:none;color:#9C7223;font-size:18px;font-weight:900;font-family:'Cairo',sans-serif;outline:none"
                 oninput="updateFixPreview('${r.s.id}',${r.totalAtt})">
             </div>
             <div style="background:#F0EDE3;border-radius:8px;padding:10px">
@@ -9037,7 +8603,7 @@ function openTerminateStudent(id){
       </div>
 
       ${rem>0?`
-      <div style="background:#B8892B66;border:1px solid #B8892B44;border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:#E9D8AE;line-height:1.6">
+      <div style="background:#B8892B66;border:1px solid #B8892B44;border-radius:12px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:#9C7223;line-height:1.6">
         ⚠️ لدى الطالب <strong>${rem} حصة متبقية</strong> — هل تريد استرداد قيمتها؟
         <div style="display:flex;gap:8px;margin-top:8px">
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
@@ -9388,7 +8954,7 @@ function openStudentProfile(id){
           <div class="profile-kpi-val" style="color:#C64B3C">${absent}</div>
           <div class="profile-kpi-lbl">غياب بعذر</div>
         </div>
-        <div class="profile-kpi" style="${unexcused>0?'background:#431407;border-color:#EA580C44':''}">
+        <div class="profile-kpi" style="${unexcused>0?'background:#C08A1E16;border-color:#C08A1E44':''}">
           <div class="profile-kpi-val" style="color:#C08A1E">${unexcused}</div>
           <div class="profile-kpi-lbl">بلا عذر</div>
         </div>
@@ -10118,7 +9684,7 @@ function renderSchedule(){
       </div>
       ${slots}${postponedSlots}
       ${renderDayAppointments(dayIdx,dayDateStr)}
-      ${!students.length&&!postponedHere.length?`<div style="padding:10px;text-align:center;font-size:20px;color:#E7E2D6">—</div>`:''}
+      ${!students.length&&!postponedHere.length?`<div style="padding:10px;text-align:center;font-size:20px;color:#9CA39D">—</div>`:''}
       <button class="add-appt-btn" onclick="openAddAppointment('${dayDateStr}')">＋ موعد</button>
     </div>`;
   }).join('');
@@ -10845,7 +10411,7 @@ function openStudentReceipt(payId){
     <div class="total-row big"><span>المتبقي</span><strong style="color:${p.paid>=p.required?'#0A4F42':'#B23A2C'}">${(p.required-p.paid).toLocaleString()} ${cur}</strong></div>
     <div style="margin-top:10px;text-align:center"><span class="status-badge">${status}</span></div>
   </div>
-  ${logRows?`<div style="font-size:12px;font-weight:700;color:#EFEAE0;margin-bottom:8px">📋 سجل الدفعات</div><table><thead><tr><th>#</th><th>التاريخ</th><th>المبلغ</th><th>بواسطة</th><th>ملاحظة</th></tr></thead><tbody>${logRows}</tbody></table>`:''}
+  ${logRows?`<div style="font-size:12px;font-weight:700;color:#1F2A24;margin-bottom:8px">📋 سجل الدفعات</div><table><thead><tr><th>#</th><th>التاريخ</th><th>المبلغ</th><th>بواسطة</th><th>ملاحظة</th></tr></thead><tbody>${logRows}</tbody></table>`:''}
   <div class="footer">صدر هذا الإيصال من نظام ${acad} الإداري — ${new Date().toLocaleDateString('ar-EG')}</div>
   </body></html>`;
   const w=window.open('','_blank');
@@ -10984,7 +10550,7 @@ const APPT_TYPES=[
   {id:'payment',label:'استلام دفعة',color:'#0F6E5C',bg:'#0F6E5C14',icon:'💰'},
   {id:'trial',label:'حصة تجريبية',color:'#8B6F47',bg:'#8B6F4714',icon:'⭐'},
   {id:'admin',label:'إداري',color:'#6B7570',bg:'#E7E2D6',icon:'📁'},
-  {id:'other',label:'أخرى',color:'#F97316',bg:'#431407',icon:'📌'},
+  {id:'other',label:'أخرى',color:'#F97316',bg:'#C08A1E16',icon:'📌'},
 ];
 
 function getApptType(id){return APPT_TYPES.find(t=>t.id===id)||APPT_TYPES[APPT_TYPES.length-1];}
@@ -11342,7 +10908,7 @@ function printTermsReport(){
   .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
   .sum-box{border:1px solid #e5e7eb;border-radius:10px;padding:14px;text-align:center}
   .sum-val{font-size:24px;font-weight:900}.sum-lbl{font-size:11px;color:#6B7570;margin-top:3px}
-  h3{font-size:14px;font-weight:900;margin:16px 0 8px;color:#EFEAE0}
+  h3{font-size:14px;font-weight:900;margin:16px 0 8px;color:#1F2A24}
   table{width:100%;border-collapse:collapse;margin-bottom:20px}
   th{background:#EFEAE0;color:#fff;padding:8px 10px;text-align:right;font-size:11px}
   td{padding:7px 10px;border-bottom:1px solid #e5e7eb;font-size:11px}
@@ -11428,7 +10994,7 @@ function renderTimetable(){
       ${sorted.length?sorted.map(s=>`<div style="background:#FFFFFF;border-radius:8px;padding:6px 8px;margin-bottom:4px;cursor:pointer" onclick="openSetSchedule('${s.id}')">
         <div style="font-size:11px;font-weight:700;color:#1F2A24">${s.name}</div>
         <div style="font-size:10px;color:#B8892B;font-family:monospace">${fmt12(getStudentTimeForDay(s,dayIdx))||'—'} <span style="color:#6B7570">(${s.scheduleDuration||60}د)</span></div>
-      </div>`).join(''):`<div style="text-align:center;padding:12px 0;color:#E7E2D6;font-size:20px">—</div>`}
+      </div>`).join(''):`<div style="text-align:center;padding:12px 0;color:#9CA39D;font-size:20px">—</div>`}
     </div>`;
   }).join('');
 
@@ -11540,7 +11106,7 @@ function openSetSchedule(sid){
         <span style="font-size:10px;color:#6B7570">🕐</span>
         <input type="time" id="dt_time_${i}" value="${dayTime}" style="background:#FFFFFF;border:1px solid #EFEAE0;border-radius:7px;color:#1F2A24;padding:4px 8px;font-family:'Cairo',sans-serif;font-size:12px;outline:none;width:100%">
       </div>
-      <span id="dt_inactive_${i}" style="display:${isChecked?'none':'block'};font-size:10px;color:#EFEAE0;flex:1">غير مفعّل</span>
+      <span id="dt_inactive_${i}" style="display:${isChecked?'none':'block'};font-size:10px;color:#1F2A24;flex:1">غير مفعّل</span>
     </div>`;
   }).join('');
 
@@ -11799,10 +11365,10 @@ function printStudentCard(sid){
     <div>
       <div style="font-size:17px;font-weight:900">${s.name}</div>
       <div style="font-size:12px;color:#3FA98A;margin-top:3px">${teacher?`👨‍🏫 ${teacher.name}`:''} ${s.phone?`• 📱 ${s.phone}`:''}</div>
-      <div style="font-size:11px;color:#6EE7B7;margin-top:2px">الحصص المتبقية: ${getRemaining(s)} حصة</div>
+      <div style="font-size:11px;color:#0F6E5C;margin-top:2px">الحصص المتبقية: ${getRemaining(s)} حصة</div>
     </div>
   </div>
-  <div style="font-size:13px;font-weight:900;margin-bottom:12px;color:#EFEAE0">📅 مواعيد الحصص الأسبوعية الثابتة</div>
+  <div style="font-size:13px;font-weight:900;margin-bottom:12px;color:#1F2A24">📅 مواعيد الحصص الأسبوعية الثابتة</div>
   ${daysRows||`<div style="text-align:center;padding:20px;color:#6B7570">لم تُحدَّد مواعيد بعد</div>`}
   ${s.scheduleNote?`<div style="background:#FEF9C3;border-radius:10px;padding:12px;margin-top:8px;font-size:12px;color:#713F12">📝 ملاحظة: ${s.scheduleNote}</div>`:''}
   <div class="footer">${acad} — ${db.settings?.phone?`📞 ${db.settings.phone}`:''}</div>
@@ -11846,7 +11412,7 @@ function exportTimetablePDF(){
   @media print{body{padding:10px}}</style></head><body>
   <div class="header">
     <div class="logo-wrap">${logoSrc}<div><div class="acad-name">${acad}</div><div style="font-size:12px;color:#6B7570">${db.settings?.academySubtitle||'لتحفيظ القرآن الكريم'}</div>${db.settings?.phone?`<div style="font-size:11px;color:#6B7570">📞 ${db.settings.phone}</div>`:''}</div></div>
-    <div style="text-align:left"><div style="font-size:14px;font-weight:900;color:#EFEAE0">🗓️ الجدول الأسبوعي الثابت</div><div style="font-size:11px;color:#6B7570;margin-top:4px">${new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div></div>
+    <div style="text-align:left"><div style="font-size:14px;font-weight:900;color:#1F2A24">🗓️ الجدول الأسبوعي الثابت</div><div style="font-size:11px;color:#6B7570;margin-top:4px">${new Date().toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div></div>
   </div>
   <table>
     <thead><tr><th>اسم الطالب</th><th style="text-align:center">الوقت</th><th style="text-align:center">المدة</th><th>المعلم</th><th>ملاحظة</th></tr></thead>
@@ -12036,12 +11602,6 @@ window.openStudentProfile = function(id){
       ${n.hw?`<div style="margin-top:5px;padding:5px 10px;background:#EFEAE022;border-right:2px solid #2A6F97;border-radius:4px;font-size:11px;color:#2A6F97">📝 ${n.hw}</div>`:''}
     </div>`).join('') : '<div style="text-align:center;color:var(--faint);padding:16px">لا توجد تقييمات بعد</div>';
 
-  // Quran progress mini
-  const prog = s.quranProgress||{};
-  const memCount = Object.values(prog).filter(v=>v==='memorized').length;
-  const revCount = Object.values(prog).filter(v=>v==='reviewing').length;
-  const quranPct = Math.round((memCount/114)*100);
-
   openModal(`
     <div class="modal-head" data-profile-sid="${escapeHtml(String(s.id))}">
       <h3>👤 ملف ${s.name}</h3>
@@ -12197,24 +11757,6 @@ window.openStudentProfile = function(id){
 
       <!-- Tab: Quran Progress -->
       <div id="pTab-quran" style="display:none">
-        ${memCount>0||revCount>0?`
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-          <div style="background:#0F6E5C14;border-radius:12px;padding:10px;text-align:center">
-            <div style="font-size:20px;font-weight:900;color:#0F6E5C">${memCount}</div>
-            <div style="font-size:10px;color:#6B7570">محفوظ</div>
-          </div>
-          <div style="background:#B8892B16;border-radius:12px;padding:10px;text-align:center">
-            <div style="font-size:20px;font-weight:900;color:#B8892B">${revCount}</div>
-            <div style="font-size:10px;color:#6B7570">مراجعة</div>
-          </div>
-          <div style="background:var(--surface2);border-radius:12px;padding:10px;text-align:center">
-            <div style="font-size:20px;font-weight:900;color:#8B6F47">${quranPct}%</div>
-            <div style="font-size:10px;color:#6B7570">مكتمل</div>
-          </div>
-        </div>
-        <div class="progress-bar-v17" style="margin-bottom:14px">
-          <div class="progress-fill-v17" style="width:${quranPct}%;background:linear-gradient(90deg,#0F6E5C,#0A4F42)"></div>
-        </div>`:''}
         <div class="profile-section">
           <div class="profile-section-head">📝 آخر التقييمات</div>
           <div class="session-notes-list" style="padding:8px 0">${qNotesHtml}</div>
@@ -12556,8 +12098,8 @@ function openTeacherInvoice(tid, mk){
   table{width:100%;border-collapse:collapse;margin-top:12px}
   th{background:#0F6E5C;color:#fff;padding:7px;text-align:right}
   td{padding:6px 8px;border-bottom:1px solid #e5e7eb}
-  tr:nth-child(even){background:#1F2A24}
-  .total-row{font-weight:900;background:#EDE9FE!important}
+  tr:nth-child(even){background:#F7F5EF}
+  .total-row{font-weight:900;background:#B8892B1A!important}
   .footer{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .fin-box{border:2px solid;border-radius:8px;padding:10px;text-align:center}
   .fin-val{font-size:20px;font-weight:900}
@@ -12741,254 +12283,6 @@ const SURAHS=[
   {n:111,name:"المسد",v:5},{n:112,name:"الإخلاص",v:4},{n:113,name:"الفلق",v:5},{n:114,name:"الناس",v:6}
 ];
 
-// ── Quran Structure Data ─────────────────────────────────────
-// 30 Juz → each split into 2 Hizb → each into 4 Rub = 240 units total
-// surahToJuz[surahNum] = juzNum
-const SURAH_JUZ = {
-  1:1,2:1,3:2,4:3,5:4,6:5,7:6,8:7,9:8,9:9,10:10,
-  11:11,12:11,13:12,14:12,15:13,16:13,17:14,18:15,19:15,20:16,
-  21:17,22:17,23:18,24:18,25:18,26:19,27:19,28:20,29:20,30:21,
-  31:21,32:21,33:21,34:22,35:22,36:22,37:23,38:23,39:23,40:24,
-  41:24,42:25,43:25,44:25,45:25,46:26,47:26,48:26,49:26,50:26,
-  51:26,52:27,53:27,54:27,55:27,56:27,57:27,58:28,59:28,60:28,
-  61:28,62:28,63:28,64:28,65:28,66:28,67:29,68:29,69:29,70:29,
-  71:29,72:29,73:29,74:29,75:29,76:29,77:29,78:30,79:30,80:30,
-  81:30,82:30,83:29,84:30,85:30,86:30,87:30,88:30,89:30,90:30,
-  91:30,92:30,93:30,94:30,95:30,96:30,97:30,98:30,99:30,100:30,
-  101:30,102:30,103:30,104:30,105:30,106:30,107:30,108:30,109:30,110:30,
-  111:30,112:30,113:30,114:30
-};
-
-// Get juz number for surah
-function surahJuz(n){ return SURAH_JUZ[n]||Math.ceil(n*30/114)||1; }
-
-// Compute juz-level progress from surahProgress
-function computeJuzProgress(prog){
-  const juzMap={};
-  for(let j=1;j<=30;j++) juzMap[j]={total:0,mem:0,rev:0,partial:0};
-  SURAHS.forEach(sr=>{
-    const j=surahJuz(sr.n);
-    if(!juzMap[j])juzMap[j]={total:0,mem:0,rev:0,partial:0};
-    juzMap[j].total++;
-    const st=prog[sr.n]||'none';
-    if(st==='memorized')juzMap[j].mem++;
-    else if(st==='reviewing')juzMap[j].rev++;
-    else if(st==='partial')juzMap[j].partial++;
-  });
-  return juzMap;
-}
-
-// Build monthly timeline data from quranNotes
-function buildQuranTimeline(s){
-  const notes=(s.quranNotes||[]).slice().reverse(); // oldest first
-  const monthly={};
-  notes.forEach(n=>{
-    if(!n.date)return;
-    const key=n.date.slice(0,7);
-    if(!monthly[key])monthly[key]={key,count:0,avgStars:0,stars:[]};
-    monthly[key].count++;
-    if(n.stars)monthly[key].stars.push(n.stars);
-  });
-  // Also add memorization snapshots if quranSnapshots exist
-  (s.quranSnapshots||[]).forEach(snap=>{
-    const key=snap.date.slice(0,7);
-    if(!monthly[key])monthly[key]={key,count:0,avgStars:0,stars:[],mem:snap.mem};
-    else monthly[key].mem=snap.mem;
-  });
-  Object.values(monthly).forEach(m=>{
-    m.avgStars=m.stars.length?Math.round(m.stars.reduce((a,b)=>a+b,0)/m.stars.length*10)/10:0;
-  });
-  return Object.values(monthly).sort((a,b)=>a.key.localeCompare(b.key)).slice(-6);
-}
-
-function renderQuranProgress(){/* removed */}
-
-// ── Juz Map Renderer ──────────────────────────────────────────
-function renderJuzMap(sid){
-  const el=document.getElementById('juzMapGrid');
-  if(!el)return;
-  if(!sid){el.innerHTML='<div style="text-align:center;color:var(--faint);padding:30px;font-size:12px">اختر طالباً</div>';return;}
-  const s=db.students.find(x=>x.id===sid);
-  if(!s){el.innerHTML='';return;}
-  const prog=s.quranProgress||{};
-  const juzMap=computeJuzProgress(prog);
-
-  // Also sync quranStuSel for cross-panel convenience
-  const sel=document.getElementById('quranStuSel');
-  if(sel&&sel.value!==sid){sel.value=sid;renderStudentQuranDetail(sid);}
-
-  const cells=Array.from({length:30},(_,i)=>{
-    const j=i+1;
-    const jd=juzMap[j]||{total:0,mem:0,rev:0,partial:0};
-    const pct=jd.total>0?Math.round(jd.mem/jd.total*100):0;
-    const allMem=jd.total>0&&jd.mem===jd.total;
-    const none=jd.mem===0&&jd.rev===0&&jd.partial===0;
-    const bg=allMem?'#0F6E5C14':none?'var(--surface2)':'#B8892B16';
-    const borderColor=allMem?'#0F6E5C':none?'var(--border)':'#B8892B';
-    const textColor=allMem?'#0F6E5C':none?'var(--muted)':'#B8892B';
-    const icon=allMem?'✅':none?'':pct>=50?'🔄':'📖';
-    return`<div style="background:${bg};border:1px solid ${borderColor};border-radius:10px;padding:8px 4px;text-align:center;cursor:default"
-      title="الجزء ${j}: ${jd.mem}/${jd.total} سور محفوظة">
-      <div style="font-size:11px;font-weight:900;color:${textColor}">جزء ${j}</div>
-      <div style="font-size:14px;margin:3px 0">${icon||'⬜'}</div>
-      <div style="font-size:10px;color:${textColor}">${pct}%</div>
-      <div style="height:3px;background:${borderColor}33;border-radius:2px;margin-top:4px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:${borderColor};border-radius:2px"></div>
-      </div>
-    </div>`;
-  }).join('');
-
-  const completedJuz=Object.values(juzMap).filter(j=>j.total>0&&j.mem===j.total).length;
-  el.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <span style="font-size:12px;color:var(--muted)">أجزاء مكتملة: <strong style="color:#0F6E5C">${completedJuz}/30</strong></span>
-      <span style="font-size:12px;color:var(--muted)">مكتمل: <strong style="color:#8B6F47">${Math.round(completedJuz/30*100)}%</strong></span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">${cells}</div>`;
-}
-
-// ── Timeline Chart Renderer ───────────────────────────────────
-function renderQuranTimeline(sid){
-  const el=document.getElementById('quranTimelineChart');
-  if(!el)return;
-  if(!sid){el.innerHTML='<div style="text-align:center;color:var(--faint);padding:20px;font-size:12px">اختر طالباً</div>';return;}
-  const s=db.students.find(x=>x.id===sid);
-  if(!s){el.innerHTML='';return;}
-
-  const timeline=buildQuranTimeline(s);
-  if(!timeline.length){
-    el.innerHTML='<div style="text-align:center;color:var(--faint);padding:20px;font-size:12px">لا توجد سجلات كافية لعرض المسار الزمني</div>';
-    return;
-  }
-
-  const maxCount=Math.max(...timeline.map(t=>t.count),1);
-  const barMaxH=80;
-  const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-
-  const bars=timeline.map(t=>{
-    const h=Math.max(Math.round(t.count/maxCount*barMaxH),4);
-    const [yr,mo]=t.key.split('-');
-    const moName=months[parseInt(mo)-1]||mo;
-    const stars=t.avgStars?`<div style="font-size:9px;color:#B8892B">★${t.avgStars}</div>`:'';
-    const memDisplay=t.mem!=null?`<div style="font-size:9px;color:#0F6E5C">${t.mem}📖</div>`:'';
-    return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
-      ${memDisplay}
-      <div style="font-size:10px;color:#6B7570;font-weight:700">${t.count}</div>
-      <div style="width:100%;height:${h}px;background:linear-gradient(180deg,#0F6E5C,#0A4F42);border-radius:4px 4px 0 0;min-width:20px;transition:height .4s"></div>
-      ${stars}
-      <div style="font-size:9px;color:var(--muted);text-align:center;line-height:1.2">${moName}<br><span style="color:var(--faint)">${yr}</span></div>
-    </div>`;
-  }).join('');
-
-  el.innerHTML=`
-    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">عدد التقييمات الشهرية لـ <strong style="color:var(--text)">${s.name}</strong></div>
-    <div style="display:flex;align-items:flex-end;gap:8px;height:${barMaxH+60}px;padding:0 4px">
-      ${bars}
-    </div>
-    <div style="font-size:10px;color:var(--faint);margin-top:8px">📖 = عدد السور المحفوظة في آخر تسجيل · ★ = متوسط التقييم</div>`;
-}
-
-// Patch renderSurahGrid to also update juz map and timeline
-const _origRenderSurahGrid = window.renderSurahGrid;
-function renderStudentQuranDetail(sid){
-  renderSurahGrid(sid);
-  // Sync juz map
-  const juzSel=document.getElementById('juzMapStuSel');
-  if(juzSel&&juzSel.value!==sid){juzSel.value=sid;}
-  renderJuzMap(sid);
-  // Sync timeline
-  const tlSel=document.getElementById('timelineStuSel');
-  if(tlSel&&tlSel.value!==sid){tlSel.value=sid;}
-  renderQuranTimeline(sid);
-}
-
-function renderSurahGrid(sid){
-  if(!sid){document.getElementById('surahGrid').innerHTML='<div style="text-align:center;color:var(--faint);padding:40px">اختر طالباً</div>';return;}
-  const s=db.students.find(x=>x.id===sid);
-  if(!s)return;
-  const prog=s.quranProgress||{};
-  const mem=Object.values(prog).filter(v=>v==='memorized').length;
-  const rev=Object.values(prog).filter(v=>v==='reviewing').length;
-  const par=Object.values(prog).filter(v=>v==='partial').length;
-  const pct=Math.round((mem/114)*100);
-
-  // Header
-  document.getElementById('quranStudentHeader').style.display='block';
-  document.getElementById('quranStudentHeader').innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
-      <div style="background:#0F6E5C14;border-radius:12px;padding:12px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#0F6E5C">${mem}</div>
-        <div style="font-size:11px;color:#6B7570">محفوظ</div>
-      </div>
-      <div style="background:#B8892B16;border-radius:12px;padding:12px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#B8892B">${rev}</div>
-        <div style="font-size:11px;color:#6B7570">مراجعة</div>
-      </div>
-      <div style="background:#EFEAE0;border-radius:12px;padding:12px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#2A6F97">${par}</div>
-        <div style="font-size:11px;color:#6B7570">جاري</div>
-      </div>
-      <div style="background:var(--surface2);border-radius:12px;padding:12px;text-align:center">
-        <div style="font-size:22px;font-weight:900;color:#8B6F47">${pct}%</div>
-        <div style="font-size:11px;color:#6B7570">مكتمل</div>
-      </div>
-    </div>
-    <div class="progress-bar-v17" style="height:10px;margin-bottom:6px">
-      <div class="progress-fill-v17" style="width:${pct}%;background:linear-gradient(90deg,#0F6E5C,#0A4F42)"></div>
-    </div>
-    <div style="font-size:11px;color:#6B7570;text-align:center">${mem} من 114 سورة محفوظة</div>`;
-
-  // Surah grid
-  const chips=SURAHS.map(sr=>{
-    const st=prog[sr.n]||'none';
-    const cls={memorized:'memorized',reviewing:'reviewing',partial:'partial',none:''}[st];
-    const icon={memorized:'✅',reviewing:'🔄',partial:'📖',none:''}[st];
-    return`<div class="surah-chip ${cls}" onclick="toggleSurahStatus('${sid}',${sr.n})" title="انقر للتغيير">
-      <div class="surah-chip-num">${sr.n}</div>
-      <div style="font-weight:700">${sr.name}</div>
-      ${icon?`<div style="font-size:14px;margin-top:2px">${icon}</div>`:''}
-    </div>`;
-  }).join('');
-
-  document.getElementById('surahGrid').innerHTML=`<div class="quran-surahs-grid">${chips}</div>`;
-  document.getElementById('quranSaveBtn').style.display='block';
-}
-
-function toggleSurahStatus(sid,surahNum){
-  const s=db.students.find(x=>x.id===sid);
-  if(!s)return;
-  if(!s.quranProgress)s.quranProgress={};
-  const cur=s.quranProgress[surahNum]||'none';
-  const cycle={none:'partial',partial:'reviewing',reviewing:'memorized',memorized:'none'};
-  s.quranProgress[surahNum]=cycle[cur];
-  if(s.quranProgress[surahNum]==='none')delete s.quranProgress[surahNum];
-  renderSurahGrid(sid);
-}
-
-function saveQuranProgress(){
-  const sid=document.getElementById('quranStuSel')?.value;
-  const s=sid?db.students.find(x=>x.id===sid):null;
-  if(!s)return;
-  s.quranLastUpdate=new Date().toLocaleDateString('ar-EG');
-  // Save snapshot for timeline
-  const mem=Object.values(s.quranProgress||{}).filter(v=>v==='memorized').length;
-  if(!s.quranSnapshots)s.quranSnapshots=[];
-  const todayKey=new Date().toISOString().slice(0,10);
-  const lastSnap=s.quranSnapshots[s.quranSnapshots.length-1];
-  if(!lastSnap||lastSnap.date.slice(0,7)!==todayKey.slice(0,7)){
-    s.quranSnapshots.push({date:todayKey,mem});
-    if(s.quranSnapshots.length>24)s.quranSnapshots=s.quranSnapshots.slice(-24);
-  } else {
-    lastSnap.mem=mem; lastSnap.date=todayKey;
-  }
-  saveDB();
-  toast(`✅ تم حفظ تقدم ${s.name} القرآني`);
-  renderQuranProgress();
-  setTimeout(()=>{
-    const sel=document.getElementById('quranStuSel');
-    if(sel){sel.value=sid;renderStudentQuranDetail(sid);}
-  },50);
-}
 
 function openAddQuranNote(){
   const stuOpts=db.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
@@ -13062,38 +12356,6 @@ function saveQuranNote(){
   s.quranLastUpdate=note.date;
   saveDB();closeModal();
   toast(`✅ تم حفظ تقييم ${s.name}`);
-  renderQuranProgress();
-}
-
-function exportQuranReport(){
-  const acad=db.settings?.academyName||'أكاديمية الأرقم';
-  const rows=db.students.map(s=>{
-    const prog=s.quranProgress||{};
-    const mem=SURAHS.filter(sr=>prog[sr.n]==='memorized').map(sr=>sr.name).join('، ');
-    const rev=SURAHS.filter(sr=>prog[sr.n]==='reviewing').map(sr=>sr.name).join('، ');
-    const memCount=Object.values(prog).filter(v=>v==='memorized').length;
-    return`<tr>
-      <td style="font-weight:700">${s.name}</td>
-      <td style="text-align:center;color:#0A4F42;font-weight:900">${memCount}</td>
-      <td style="font-size:11px">${mem||'—'}</td>
-      <td style="font-size:11px;color:#9C7223">${rev||'—'}</td>
-      <td style="font-size:11px;color:#6B7570">${s.quranLastUpdate||'—'}</td>
-    </tr>`;
-  }).join('');
-  const html=`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-  <style>body{font-family:'Cairo',sans-serif;direction:rtl;padding:24px;color:#111;font-size:12px}
-  h1{color:#0A4F42;font-size:20px;border-bottom:3px solid #0A4F42;padding-bottom:8px;margin-bottom:16px}
-  table{width:100%;border-collapse:collapse}th{background:#0A4F42;color:#fff;padding:8px;text-align:right}
-  td{padding:7px 8px;border-bottom:1px solid #e5e7eb}tr:nth-child(even){background:#f9fafb}
-  .footer{margin-top:16px;font-size:10px;color:#6B7570;text-align:center}
-  </style></head><body>
-  <h1>📖 تقرير التقدم القرآني — ${acad}</h1>
-  <table><thead><tr><th>الطالب</th><th style="text-align:center">عدد السور المحفوظة</th><th>السور المحفوظة</th><th>قيد المراجعة</th><th>آخر تحديث</th></tr></thead>
-  <tbody>${rows}</tbody></table>
-  <div class="footer">${acad} — ${new Date().toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}</div>
-  </body></html>`;
-  const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),400);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -13794,7 +13056,7 @@ function v19RenderQuickAtt(){
       <div style="display:flex;gap:5px;margin-top:8px">
         <button onclick="v19QuickMark('${s.id}','حاضر','${today}')" title="حاضر" style="flex:1;background:${isP?'#0F6E5C14':'#FFFFFF'};color:${isP?'#0F6E5C':'#6B7570'};border:1px solid ${isP?'#0A4F42':'#EFEAE0'};border-radius:8px;padding:6px;font-size:12px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700">✅</button>
         <button onclick="v19QuickMark('${s.id}','غائب','${today}')" title="غياب بعذر" style="flex:1;background:${isA?'#C64B3C14':'#FFFFFF'};color:${isA?'#C64B3C':'#6B7570'};border:1px solid ${isA?'#B23A2C':'#EFEAE0'};border-radius:8px;padding:6px;font-size:12px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700">❌</button>
-        <button onclick="openUnexcusedAbsence('${s.id}','${today}')" title="غياب بلا إشعار — الحصة محسوبة" style="flex:1;background:${isU?'#431407':'#FFFFFF'};color:${isU?'#F97316':'#6B7570'};border:1px solid ${isU?'#EA580C':'#EFEAE0'};border-radius:8px;padding:6px;font-size:12px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700">🚫</button>
+        <button onclick="openUnexcusedAbsence('${s.id}','${today}')" title="غياب بلا إشعار — الحصة محسوبة" style="flex:1;background:${isU?'#C08A1E16':'#FFFFFF'};color:${isU?'#9C7223':'#6B7570'};border:1px solid ${isU?'#C08A1E':'#EFEAE0'};border-radius:8px;padding:6px;font-size:12px;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700">🚫</button>
       </div>
       ${(isP||isA||isU)?`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:5px;border-top:1px solid #E7E2D6">
         <span style="font-size:10px;color:#6B7570;cursor:pointer;padding:2px 6px;border-radius:5px" onmouseover="this.style.color='#2A6F97'" onmouseout="this.style.color='#6B7570'" onclick="openEditAttByStudentDate('${s.id}','${today}')">✏️ تعديل</span>
@@ -13814,8 +13076,8 @@ function v19RenderQuickAtt(){
       </div>
     </div>
     <div style="background:#F0EDE3;border:1px solid #78716C33;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:11px;color:#A8A29E;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <span>✅ حاضر</span><span style="color:#EFEAE0">|</span>
-      <span>❌ غياب بعذر</span><span style="color:#EFEAE0">|</span>
+      <span>✅ حاضر</span><span style="color:#1F2A24">|</span>
+      <span>❌ غياب بعذر</span><span style="color:#1F2A24">|</span>
       <span style="color:#C08A1E">🚫 غياب بلا إشعار — <strong>الحصة محسوبة وفق الشروط</strong></span>
     </div>
     <div class="progress-bar-v17" style="margin-bottom:16px">
@@ -13879,7 +13141,7 @@ function _renderAttFull(){
     <div class="att-stats" style="margin-bottom:14px">
       <span class="att-stat-chip" style="background:#0F6E5C14;color:#0F6E5C">✅ حاضر: ${present}</span>
       <span class="att-stat-chip" style="background:#C64B3C14;color:#C64B3C">❌ غياب: ${absent}</span>
-      ${unexcusedAll?`<span class="att-stat-chip" style="background:#431407;color:#C08A1E">🚫 بلا عذر: ${unexcusedAll}</span>`:''}
+      ${unexcusedAll?`<span class="att-stat-chip" style="background:#C08A1E16;color:#C08A1E">🚫 بلا عذر: ${unexcusedAll}</span>`:''}
       <span class="att-stat-chip" style="background:#E7E2D6;color:#6B7570">📋 معروض: ${sorted.length}</span>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px">
@@ -14069,15 +13331,15 @@ function v19Contract(sid){
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
   <style>@page{size:A4;margin:20mm}body{font-family:'Cairo',sans-serif;direction:rtl;color:#111;font-size:13px;line-height:1.9}
   h1{color:#0A4F42;text-align:center;font-size:20px;border-bottom:3px double #0A4F42;padding-bottom:10px;margin-bottom:20px}
-  .sec{margin-bottom:16px;padding:12px 16px;border:1px solid #1F2A24;border-radius:10px}
-  .sh{font-size:13px;font-weight:900;color:#EFEAE0;margin-bottom:8px;border-bottom:1px solid #F3F4F6;padding-bottom:5px}
+  .sec{margin-bottom:16px;padding:12px 16px;border:1px solid #E7E2D6;border-radius:10px}
+  .sh{font-size:13px;font-weight:900;color:#1F2A24;margin-bottom:8px;border-bottom:1px solid #F3F4F6;padding-bottom:5px}
   .row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px}
   .key{color:#6B7570}.val{font-weight:700}
   .sigs{display:flex;justify-content:space-around;margin-top:32px;gap:12px}
   .sign{text-align:center;flex:1}
   .sl{border-bottom:2px solid #d1d5db;width:140px;margin:0 auto 8px;height:55px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px}
   .sig-label-txt{font-size:11px;color:#6B7570;margin-bottom:8px;font-weight:700;line-height:1.5}
-  .sig-name-txt{font-size:12px;font-weight:900;color:#EFEAE0;margin-top:4px}
+  .sig-name-txt{font-size:12px;font-weight:900;color:#1F2A24;margin-top:4px}
   .sig-date-txt{font-size:10px;color:#6B7570;margin-top:3px}
   .e-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#0F6E5C,#0F6E5C);color:#fff;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;letter-spacing:.3px;margin-bottom:6px}
   .e-sign-note{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:14px;font-size:10px;color:#166534;text-align:center;line-height:1.7}
@@ -14100,7 +13362,7 @@ function v19Contract(sid){
     <div class="row"><span class="key">المدة:</span><span class="val">${s.scheduleDuration||60} دقيقة</span></div>
   </div>
   <div class="sec"><div class="sh">الشروط</div>
-    <div style="font-size:12px;color:#EFEAE0;line-height:2">١. يلتزم المشترك بالحضور في المواعيد المحددة.<br>٢. الغياب يُخصم من رصيد الحصص.<br>٣. لا يُسترد ثمن الحصص المنفذة.<br>٤. يُجدَّد الاشتراك قبل انتهاء الحصص.<br>٥. تسري هذه الشروط من تاريخ التوقيع.</div>
+    <div style="font-size:12px;color:#1F2A24;line-height:2">١. يلتزم المشترك بالحضور في المواعيد المحددة.<br>٢. الغياب يُخصم من رصيد الحصص.<br>٣. لا يُسترد ثمن الحصص المنفذة.<br>٤. يُجدَّد الاشتراك قبل انتهاء الحصص.<br>٥. تسري هذه الشروط من تاريخ التوقيع.</div>
   </div>
   <div class="sigs">
     <div class="sign"><div class="sl"></div><div style="font-size:12px;color:#6B7570">توقيع المشترك</div><div style="font-weight:700">${s.name}</div></div>
@@ -14290,14 +13552,14 @@ function openUnexcusedAbsence(sid, date){
       <div><div style="font-size:16px;font-weight:900;color:#C08A1E">غياب بدون إشعار</div>
       <div style="font-size:13px;color:#6B7570;margin-top:2px">${escapeHtml(s.name)} — ${date}</div></div>
     </div>
-    <div style="background:#431407;border:1px solid #EA580C66;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:#FED7AA;line-height:1.7">
+    <div style="background:#C08A1E16;border:1px solid #C08A1E66;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:#9C7223;line-height:1.7">
       📌 وفقاً للشروط، <strong>تُعتبر هذه الحصة منفذة</strong> ولا يحق للطالب تعويضها.<br>
       <span style="color:#C08A1E;font-weight:700">سيتم خصم الحصة من رصيد الطالب.</span>
     </div>
     <div style="background:var(--surface2,#FBF9F3);border-radius:12px;padding:14px;margin-bottom:12px">
       <div style="font-size:12px;font-weight:700;color:#6B7570;margin-bottom:10px">الخطوة 1 — تسجيل الغياب</div>
       <button onclick="v19MarkUnexcused('${sid}','${date}');this.textContent='✅ تم التسجيل';this.disabled=true;this.style.background='#0F6E5C14';this.style.color='#0F6E5C'"
-        style="width:100%;background:${alreadyUnex?'#0F6E5C14':'#431407'};color:${alreadyUnex?'#0F6E5C':'#C08A1E'};border:1px solid ${alreadyUnex?'#0A4F42':'#EA580C'};border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif">
+        style="width:100%;background:${alreadyUnex?'#0F6E5C14':'#C08A1E16'};color:${alreadyUnex?'#0F6E5C':'#C08A1E'};border:1px solid ${alreadyUnex?'#0A4F42':'#C08A1E'};border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif">
         ${alreadyUnex?'✅ مسجّل بالفعل':'🚫 تسجيل كـ "غائب بلا عذر" (الحصة محسوبة)'}
       </button>
     </div>
@@ -14535,7 +13797,7 @@ function openUnifiedReport(sid){
         <div style="background:#C64B3C22;border:1px solid #B23A2C33;border-radius:12px;padding:12px;text-align:center">
           <div style="font-size:22px;font-weight:900;color:#C64B3C">${absent}</div><div style="font-size:10px;color:#6B7570">غياب بعذر</div>
         </div>
-        <div style="background:#431407;border:1px solid #EA580C33;border-radius:12px;padding:12px;text-align:center">
+        <div style="background:#C08A1E16;border:1px solid #C08A1E33;border-radius:12px;padding:12px;text-align:center">
           <div style="font-size:22px;font-weight:900;color:#C08A1E">${unexcused}</div><div style="font-size:10px;color:#6B7570">بلا عذر</div>
         </div>
         <div style="background:#EFEAE0;border:1px solid #3B82F633;border-radius:12px;padding:12px;text-align:center">
@@ -15144,7 +14406,7 @@ function v21RenderPortal(s){
         <div style="flex:1">
           <div style="font-size:12px;color:#6B7570;margin-bottom:4px">آخر 15 حصة</div>
           <div style="display:flex;gap:3px;flex-wrap:wrap">
-            ${attLog.slice(0,15).map(a=>`<div title="${a.date}" style="width:16px;height:16px;border-radius:4px;background:${a.status==='حاضر'?'#0F6E5C':a.status==='غائب_بلاعذر'?'#EA580C':'#C64B3C'}"></div>`).join('')}
+            ${attLog.slice(0,15).map(a=>`<div title="${a.date}" style="width:16px;height:16px;border-radius:4px;background:${a.status==='حاضر'?'#0F6E5C':a.status==='غائب_بلاعذر'?'#C08A1E':'#C64B3C'}"></div>`).join('')}
           </div>
         </div>
       </div>
@@ -15554,7 +14816,7 @@ css.textContent = `
   transition: all .2s !important;
   color: #1F2A24 !important;
 }
-.login-inp-wrap input::placeholder { color: #EFEAE0 !important; }
+.login-inp-wrap input::placeholder { color:#1F2A24 !important; }
 .login-inp-wrap input:focus {
   border-color: rgba(15,110,92,.45) !important;
   background: rgba(255,255,255,.95) !important;
@@ -15617,13 +14879,13 @@ css.textContent = `
   margin-top: 18px;
 }
 .v23-login-divider::before,.v23-login-divider::after {
-  content:''; flex:1; height:1px; background:rgba(255,255,255,.05);
+  content:''; flex:1; height:1px; background:#E7E2D6;
 }
-.v23-login-divider span { font-size:10px; color:#E7E2D6; white-space:nowrap; }
+.v23-login-divider span { font-size:10px; color:#9CA39D; white-space:nowrap; }
 
 /* v23 tagline */
 .v23-tagline {
-  text-align: center; font-size: 10px; color: #E7E2D6;
+  text-align: center; font-size: 10px; color: #6B7570;
   margin-top: 16px; letter-spacing: .5px;
 }
 .v23-tagline b { color: #0F6E5C; }
@@ -16316,8 +15578,8 @@ sc.textContent = `
 .v23s-sess-status {
   font-size: 10px; padding: 3px 9px; border-radius: 20px; font-weight: 700;
 }
-.v23s-sess-status.done     { background: rgba(15,110,92,.8);  color: #0F6E5C; }
-.v23s-sess-status.postponed{ background: rgba(184,137,43,.8);  color: #9C7223; }
+.v23s-sess-status.done     { background: rgba(15,110,92,.12);  color: #0F6E5C; }
+.v23s-sess-status.postponed{ background: rgba(184,137,43,.12);  color: #9C7223; }
 .v23s-sess-status.upcoming { background: rgba(239,234,224,.5); color: #2A6F97; }
 .v23s-sess-meta {
   font-size: 11px; color: #6B7570; display: flex; gap: 12px;
@@ -16332,8 +15594,8 @@ sc.textContent = `
   cursor: pointer; transition: all .18s; display: flex; align-items: center; gap: 4px;
 }
 .v23s-btn:hover { opacity: .85; transform: translateY(-1px); }
-.v23s-btn.green  { background: rgba(15,110,92,.8);  color: #0F6E5C; border: 1px solid rgba(15,110,92,.3); }
-.v23s-btn.gold   { background: rgba(184,137,43,.8);  color: #9C7223; border: 1px solid rgba(184,137,43,.3); }
+.v23s-btn.green  { background: rgba(15,110,92,.1);  color: #0F6E5C; border: 1px solid rgba(15,110,92,.3); }
+.v23s-btn.gold   { background: rgba(184,137,43,.12);  color: #9C7223; border: 1px solid rgba(184,137,43,.3); }
 .v23s-btn.blue   { background: rgba(239,234,224,.8); color: #2A6F97; border: 1px solid rgba(42,111,151,.3); }
 .v23s-btn.purple { background: rgba(139,111,71,.8);color: #C4B5FD; border: 1px solid rgba(139,111,71,.3); }
 .v23s-btn.wa     { background: rgba(18,140,126,.2);color: #0F6E5C; border: 1px solid rgba(37,211,102,.3); }
@@ -16380,7 +15642,7 @@ sc.textContent = `
 }
 .v23s-add-btn {
   width: 100%; padding: 7px; border: none; border-top: 1px solid rgba(255,255,255,.04);
-  background: transparent; color: #EFEAE0; font-size: 11px;
+  background: transparent; color:#1F2A24; font-size: 11px;
   cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 700;
   transition: all .15s;
 }
@@ -16399,7 +15661,7 @@ sc.textContent = `
   transition: all .2s;
 }
 .v23s-search:focus { border-color: rgba(15,110,92,.4); box-shadow: 0 0 0 3px rgba(15,110,92,.06); }
-.v23s-search::placeholder { color: #EFEAE0; }
+.v23s-search::placeholder { color:#1F2A24; }
 .v23s-select {
   padding: 9px 12px; background: rgba(255,255,255,.8);
   border: 1px solid rgba(255,255,255,.08); border-radius: 12px;
@@ -16427,7 +15689,7 @@ sc.textContent = `
 /* ── Empty state ── */
 .v23s-empty {
   text-align: center; padding: 40px 20px;
-  color: #EFEAE0; font-size: 13px;
+  color:#1F2A24; font-size: 13px;
 }
 .v23s-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: .5; }
 
@@ -16551,7 +15813,7 @@ function renderV23Schedule() {
       </div>
       <div class="v23s-stat">
         <div class="v23s-stat-icon">📆</div>
-        <div><div class="v23s-stat-val" style="color:#34D399">${totalWeek}</div><div class="v23s-stat-lbl">حصص الأسبوع</div></div>
+        <div><div class="v23s-stat-val" style="color:#0A4F42">${totalWeek}</div><div class="v23s-stat-lbl">حصص الأسبوع</div></div>
       </div>
     </div>
 
@@ -16695,9 +15957,9 @@ function buildWeekGrid(todayIdx, selTeacher, todayStr) {
       const postpone = isSessionPostponed(s.id, dayDateStr);
       const cls      = postpone ? 'postponed' : done ? 'done' : '';
       const pill     = done
-        ? `<span class="v23s-slot-pill" style="background:rgba(15,110,92,.8);color:#0F6E5C">✓ تم</span>`
+        ? `<span class="v23s-slot-pill" style="background:rgba(15,110,92,.12);color:#0F6E5C">✓ تم</span>`
         : postpone
-        ? `<span class="v23s-slot-pill" style="background:rgba(184,137,43,.8);color:#9C7223">مؤجل</span>`
+        ? `<span class="v23s-slot-pill" style="background:rgba(184,137,43,.12);color:#9C7223">مؤجل</span>`
         : '';
       return `
         <div class="v23s-day-slot ${cls}" onclick="openSlotActions('${s.id}','${dayDateStr}')">
@@ -16726,7 +15988,7 @@ function buildWeekGrid(todayIdx, selTeacher, todayStr) {
           <div class="v23s-day-count" style="color:${stus.length?'#0F6E5C':'#9CA39D'}">${stus.length ? stus.length+' طالب' : 'لا حصص'}</div>
         </div>
         ${slots}${pSlots}${appts}
-        ${!stus.length && !postponedHere.length ? `<div style="padding:14px;text-align:center;font-size:18px;color:#E7E2D6">—</div>` : ''}
+        ${!stus.length && !postponedHere.length ? `<div style="padding:14px;text-align:center;font-size:18px;color:#9CA39D">—</div>` : ''}
         <button class="v23s-add-btn" onclick="openAddAppointment('${dayDateStr}')">＋ إضافة موعد</button>
       </div>`;
   }).join('');
@@ -16950,7 +16212,7 @@ ws.textContent = `
   transition: all .2s;
 }
 .v23w-search:focus { border-color: rgba(37,211,102,.4); box-shadow: 0 0 0 3px rgba(37,211,102,.06); }
-.v23w-search::placeholder { color: #EFEAE0; }
+.v23w-search::placeholder { color:#1F2A24; }
 .v23w-select {
   padding: 9px 12px; background: rgba(255,255,255,.8);
   border: 1px solid rgba(255,255,255,.08); border-radius: 12px;
@@ -17031,7 +16293,7 @@ ws.textContent = `
   resize: vertical; outline: none; box-sizing: border-box; transition: all .2s;
 }
 .v23w-textarea:focus { border-color: rgba(37,211,102,.4); box-shadow: 0 0 0 3px rgba(37,211,102,.06); }
-.v23w-textarea::placeholder { color: #EFEAE0; }
+.v23w-textarea::placeholder { color:#1F2A24; }
 .v23w-char-count { font-size: 10px; color: #9CA39D; text-align: left; margin-top: 4px; }
 
 /* ── Variable pills ── */
@@ -17081,9 +16343,9 @@ ws.textContent = `
 .v23w-prog-meta { display: flex; justify-content: space-between; font-size: 11px; color: #6B7570; }
 .v23w-log { max-height: 180px; overflow-y: auto; margin-top: 10px; }
 .v23w-log-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; margin-bottom: 3px; font-size: 11px; }
-.v23w-log-item.ok   { background: rgba(15,110,92,.6);  color: #3FA98A; }
+.v23w-log-item.ok   { background: rgba(15,110,92,.1);  color: #0A4F42; }
 .v23w-log-item.skip { background: rgba(231,226,214,.5);  color: #6B7570; }
-.v23w-log-item.err  { background: rgba(198,75,60,.6);  color: #C64B3C; }
+.v23w-log-item.err  { background: rgba(198,75,60,.1);  color: #C64B3C; }
 
 /* ── History ── */
 .v23w-hist-item {
@@ -17302,7 +16564,7 @@ function renderV23Broadcast() {
               </div>
               ${q.count>0
                 ? `<button class="v23w-filter-btn act" onclick="${q.fn}" style="font-size:12px;padding:8px 14px">إرسال ▸</button>`
-                : `<span style="font-size:11px;color:#EFEAE0">لا يوجد</span>`}
+                : `<span style="font-size:11px;color:#1F2A24">لا يوجد</span>`}
             </div>`).join('')}
         </div>
       </div>
@@ -17316,9 +16578,9 @@ function renderV23Broadcast() {
               <div class="v23w-hist-title">${h.label}</div>
               <div class="v23w-hist-meta">${h.count} رسالة · ${h.time}</div>
             </div>
-            <span style="font-size:10px;padding:3px 9px;border-radius:10px;background:rgba(15,110,92,.6);color:#0F6E5C">✓ تم</span>
+            <span style="font-size:10px;padding:3px 9px;border-radius:10px;background:rgba(15,110,92,.1);color:#0F6E5C">✓ تم</span>
           </div>`).join('')
-          : `<div style="text-align:center;padding:40px;color:#EFEAE0">
+          : `<div style="text-align:center;padding:40px;color:#1F2A24">
               <div style="font-size:30px;margin-bottom:10px">📭</div>
               لا يوجد سجل إرسال بعد
             </div>`}
@@ -17376,7 +16638,7 @@ function renderV23Broadcast() {
       <button class="v23w-send-btn" id="v23wSendBtn" onclick="v23wSendAll()">
         📤 إرسال عبر واتساب — <span id="v23wSendCount">0</span> شخص
       </button>
-      <div style="text-align:center;font-size:11px;color:#EFEAE0;margin-top:8px">
+      <div style="text-align:center;font-size:11px;color:#1F2A24;margin-top:8px">
         سيفتح واتساب لكل شخص بالترتيب — تأكد من السماح بالنوافذ المنبثقة
       </div>
 
@@ -17405,7 +16667,7 @@ function v23wRenderList() {
   const list = waGetList();
 
   if (!list.length) {
-    el.innerHTML = `<div style="padding:24px;text-align:center;color:#EFEAE0">لا يوجد مستلمون مطابقون</div>`;
+    el.innerHTML = `<div style="padding:24px;text-align:center;color:#1F2A24">لا يوجد مستلمون مطابقون</div>`;
     v23wUpdateCounter();
     return;
   }
@@ -17691,9 +16953,9 @@ si.textContent = `
   padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;
   border: 1px solid transparent;
 }
-.sh-chip.green  { background: rgba(15,110,92,.8);   color: #0F6E5C; border-color: rgba(15,110,92,.25); }
-.sh-chip.yellow { background: rgba(184,137,43,.8);   color: #9C7223; border-color: rgba(184,137,43,.25); }
-.sh-chip.red    { background: rgba(198,75,60,.8);  color: #C64B3C; border-color: rgba(198,75,60,.25); }
+.sh-chip.green  { background: rgba(15,110,92,.1);   color: #0F6E5C; border-color: rgba(15,110,92,.25); }
+.sh-chip.yellow { background: rgba(184,137,43,.12);   color: #9C7223; border-color: rgba(184,137,43,.25); }
+.sh-chip.red    { background: rgba(198,75,60,.1);  color: #C64B3C; border-color: rgba(198,75,60,.25); }
 .sh-chip.blue   { background: rgba(239,234,224,.8);  color: #2A6F97; border-color: rgba(42,111,151,.25); }
 .sh-chip.purple { background: rgba(139,111,71,.8); color: #C4B5FD; border-color: rgba(139,111,71,.25); }
 
@@ -17796,11 +17058,11 @@ si.textContent = `
   justify-content: center; gap: 6px;
 }
 .sh-btn:hover { opacity:.87; transform: translateY(-1px); }
-.sh-btn.green  { background: rgba(15,110,92,.9);   color: #0F6E5C; border: 1px solid rgba(15,110,92,.3); }
-.sh-btn.yellow { background: rgba(184,137,43,.9);   color: #9C7223; border: 1px solid rgba(184,137,43,.3); }
+.sh-btn.green  { background: rgba(15,110,92,.1);   color: #0F6E5C; border: 1px solid rgba(15,110,92,.3); }
+.sh-btn.yellow { background: rgba(184,137,43,.12);   color: #9C7223; border: 1px solid rgba(184,137,43,.3); }
 .sh-btn.blue   { background: rgba(239,234,224,.9);  color: #2A6F97; border: 1px solid rgba(42,111,151,.3); }
 .sh-btn.purple { background: rgba(139,111,71,.9); color: #C4B5FD; border: 1px solid rgba(139,111,71,.3); }
-.sh-btn.red    { background: rgba(198,75,60,.9);  color: #C64B3C; border: 1px solid rgba(198,75,60,.3); }
+.sh-btn.red    { background: rgba(198,75,60,.1);  color: #C64B3C; border: 1px solid rgba(198,75,60,.3); }
 .sh-btn.wa     { background: rgba(18,140,126,.2);color: #0F6E5C; border: 1px solid rgba(37,211,102,.3); }
 
 /* ── Alert banner ── */
@@ -17809,18 +17071,18 @@ si.textContent = `
   padding: 12px 14px; border-radius: 13px; margin-bottom: 12px;
   font-size: 12px; font-weight: 700;
 }
-.sh-alert.warn { background: rgba(184,137,43,.7); color: #9C7223; border: 1px solid rgba(184,137,43,.25); }
-.sh-alert.err  { background: rgba(198,75,60,.7); color: #C64B3C; border: 1px solid rgba(198,75,60,.25); }
+.sh-alert.warn { background: rgba(184,137,43,.12); color: #9C7223; border: 1px solid rgba(184,137,43,.25); }
+.sh-alert.err  { background: rgba(198,75,60,.12); color: #C64B3C; border: 1px solid rgba(198,75,60,.25); }
 .sh-alert.info { background: rgba(239,234,224,.7); color: #2A6F97; border: 1px solid rgba(42,111,151,.25); }
 
 /* ── Quick pay form ── */
 .sh-pay-form {
-  background: rgba(231,226,214,.5); border: 1px solid rgba(255,255,255,.06);
+  background: rgba(231,226,214,.5); border: 1px solid #E7E2D6;
   border-radius: 14px; padding: 14px; margin-top: 12px;
 }
 .sh-inp {
-  width: 100%; padding: 10px 12px; background: rgba(255,255,255,.8);
-  border: 1px solid rgba(255,255,255,.08); border-radius: 11px;
+  width: 100%; padding: 10px 12px; background: #FFFFFF;
+  border: 1px solid #E7E2D6; border-radius: 11px;
   color: #1F2A24; font-family: 'Cairo',sans-serif; font-size: 13px;
   outline: none; box-sizing: border-box; transition: all .2s; margin-bottom: 8px;
 }
@@ -17833,10 +17095,10 @@ si.textContent = `
 .sh-days { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
 .sh-day {
   padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
-  border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.7);
+  border: 1px solid #E7E2D6; background: #FFFFFF;
   color: #6B7570;
 }
-.sh-day.on { background: rgba(15,110,92,.8); color: #0F6E5C; border-color: rgba(15,110,92,.3); }
+.sh-day.on { background: rgba(15,110,92,.12); color: #0F6E5C; border-color: rgba(15,110,92,.3); }
 
 /* ── Smart alerts panel ── */
 .sh-smart-list { display: flex; flex-direction: column; gap: 8px; }
@@ -18177,7 +17439,7 @@ function renderSmartHub() {
                     <span style="color:#6B7570;font-size:10px">${a.date}</span>
                   </div>
                   ${a.note ? `<div class="sh-tl-date">${a.note}</div>` : ''}
-                </div>`).join('') || '<div style="text-align:center;padding:20px;color:#EFEAE0">لا يوجد سجل حضور</div>'}
+                </div>`).join('') || '<div style="text-align:center;padding:20px;color:#1F2A24">لا يوجد سجل حضور</div>'}
             </div>
           </div>
           <div class="sh-actions">
@@ -18245,7 +17507,7 @@ function renderSmartHub() {
                     <span style="color:#0F6E5C">مدفوع: ${p.paid.toLocaleString()} ${cur}</span>
                     <span style="color:#6B7570">مطلوب: ${p.required.toLocaleString()} ${cur}</span>
                   </div>
-                </div>`).join('') || '<div style="text-align:center;padding:20px;color:#EFEAE0">لا يوجد سجل مدفوعات</div>'}
+                </div>`).join('') || '<div style="text-align:center;padding:20px;color:#1F2A24">لا يوجد سجل مدفوعات</div>'}
             </div>
           </div>
         </div>
@@ -18264,7 +17526,7 @@ function renderSmartHub() {
                   </div>
                   ${ev.note ? `<div class="sh-tl-date">${ev.note}</div>` : ''}
                 </div>`;
-              }).join('') || '<div style="text-align:center;padding:20px;color:#EFEAE0">لا يوجد سجل</div>'}
+              }).join('') || '<div style="text-align:center;padding:20px;color:#1F2A24">لا يوجد سجل</div>'}
             </div>
           </div>
         </div>
@@ -18289,7 +17551,7 @@ function renderSmartHub() {
                 ` : ''}
               </div>`).join('')}
           </div>` : `
-          <div style="text-align:center;padding:40px;color:#EFEAE0">
+          <div style="text-align:center;padding:40px;color:#1F2A24">
             <div style="font-size:36px;margin-bottom:12px">✅</div>
             <div style="font-size:14px;font-weight:700;color:#0F6E5C">كل شيء على ما يرام!</div>
             <div style="font-size:12px;margin-top:6px">لا توجد تنبيهات لهذا الطالب حالياً</div>
@@ -18442,7 +17704,7 @@ function openGlobalSearch(){
         <div style="padding:16px 20px;border-bottom:1px solid #EFEAE0;display:flex;align-items:center;gap:10px">
           <span style="font-size:18px;color:#6B7A99">🔍</span>
           <input id="gSearchInput" placeholder="ابحث عن طالب أو معلم..." autocomplete="off"
-            style="flex:1;background:transparent;border:none;outline:none;color:#F0F4FF;font-family:Cairo,sans-serif;font-size:15px"
+            style="flex:1;background:transparent;border:none;outline:none;color:#1F2A24;font-family:Cairo,sans-serif;font-size:15px"
             oninput="runGlobalSearch(this.value)"
             onkeydown="gSearchKey(event)">
           <span style="font-size:11px;color:#9CA39D;background:#FBF9F3;padding:2px 8px;border-radius:4px">ESC</span>
@@ -18536,10 +17798,10 @@ function runGlobalSearch(q){
       onmouseover="this.style.background='#FBF9F3'" onmouseout="this.style.background=''">
       <div style="font-size:22px;width:36px;text-align:center">${r.icon}</div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:#F0F4FF">${r.title}</div>
+        <div style="font-size:13px;font-weight:700;color:#1F2A24">${r.title}</div>
         <div style="font-size:11px;color:#6B7A99;margin-top:2px">${r.sub}</div>
       </div>
-      <span style="font-size:10px;color:#EFEAE0">↵</span>
+      <span style="font-size:10px;color:#1F2A24">↵</span>
     </div>`).join('');
 }
 
@@ -19093,7 +18355,7 @@ function openSyncSettings(){
 
     <!-- إعدادات الاتصال -->
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
-      <div style="font-size:12px;font-weight:900;color:#F0F4FF;margin-bottom:14px">⚙️ إعدادات الاتصال</div>
+      <div style="font-size:12px;font-weight:900;color:#1F2A24;margin-bottom:14px">⚙️ إعدادات الاتصال</div>
       <div class="form-group">
         <label style="font-size:11px;color:#6B7570">Supabase URL</label>
         <input id="supa_url" value="${cfg.url||''}" placeholder="https://xxxx.supabase.co"
@@ -19125,11 +18387,11 @@ function openSyncSettings(){
         </div>
         <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
           <span style="background:#EFEAE0;color:#2A6F97;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:900">٢</span>
-          <span>اذهب إلى <strong style="color:#F0F4FF">Settings → API</strong> وانسخ URL و anon key</span>
+          <span>اذهب إلى <strong style="color:#1F2A24">Settings → API</strong> وانسخ URL و anon key</span>
         </div>
         <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
           <span style="background:#EFEAE0;color:#2A6F97;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:900">٣</span>
-          <span>في <strong style="color:#F0F4FF">SQL Editor</strong> نفّذ هذا الأمر:</span>
+          <span>في <strong style="color:#1F2A24">SQL Editor</strong> نفّذ هذا الأمر:</span>
         </div>
         <div style="background:#F7F5EF;border:1px solid #EFEAE0;border-radius:8px;padding:10px;margin-bottom:8px;direction:ltr;font-family:monospace;font-size:11px;color:#3FA98A;user-select:all;cursor:copy"
           onclick="navigator.clipboard?.writeText(this.textContent);toast('تم النسخ ✓')">
@@ -19143,7 +18405,7 @@ ALTER TABLE arqam_db REPLICA IDENTITY FULL;
         </div>
         <div style="display:flex;gap:10px;align-items:flex-start">
           <span style="background:#EFEAE0;color:#2A6F97;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:900">٤</span>
-          <span>في <strong style="color:#F0F4FF">Database → Replication</strong> فعّل الجدول <strong style="color:#0F6E5C">arqam_db</strong> في Realtime</span>
+          <span>في <strong style="color:#1F2A24">Database → Replication</strong> فعّل الجدول <strong style="color:#0F6E5C">arqam_db</strong> في Realtime</span>
         </div>
       </div>
     </details>
@@ -19298,14 +18560,14 @@ function renderParentPortal(children, parentPhone){
       <!-- رأس البطاقة -->
       <div style="background:linear-gradient(135deg,#FBF9F3,#FFFFFF);padding:18px 20px;border-bottom:1px solid #EFEAE0">
         <div style="display:flex;align-items:center;gap:14px">
-          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#0A4F4222,#0A4F4244);display:flex;align-items:center;justify-content:center;font-size:24px">👤</div>
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#0F6E5C,#0A4F42);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;font-family:'Amiri',serif;box-shadow:0 3px 12px rgba(15,110,92,.3)">${(s.name||'؟').trim().slice(0,2)}</div>
           <div style="flex:1">
-            <div style="font-size:16px;font-weight:900;color:#F0F4FF">${s.name}</div>
-            <div style="font-size:11px;color:#6B7A99;margin-top:2px">${teacher?'المعلم: '+teacher.name:'—'} ${days?'· '+days:''} ${time}</div>
+            <div style="font-size:16px;font-weight:900;color:#1F2A24">${s.name}</div>
+            <div style="font-size:11px;color:#6B7570;margin-top:2px">${teacher?'المعلم: '+teacher.name:'—'} ${days?'· '+days:''} ${time}</div>
           </div>
           <div style="text-align:center">
             <div style="font-size:22px;font-weight:900;color:${remColor}">${rem}</div>
-            <div style="font-size:10px;color:#6B7A99">حصة متبقية</div>
+            <div style="font-size:10px;color:#6B7570">حصة متبقية</div>
           </div>
         </div>
       </div>
@@ -19316,21 +18578,21 @@ function renderParentPortal(children, parentPhone){
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
           <div style="text-align:center;background:#FBF9F3;border-radius:10px;padding:10px">
             <div style="font-size:20px;font-weight:900;color:#2A6F97">${att}</div>
-            <div style="font-size:10px;color:#6B7A99">حضر</div>
+            <div style="font-size:10px;color:#6B7570">حضر</div>
           </div>
           <div style="text-align:center;background:#FBF9F3;border-radius:10px;padding:10px">
             <div style="font-size:20px;font-weight:900;color:${pctColor}">${pct}%</div>
-            <div style="font-size:10px;color:#6B7A99">الانتظام</div>
+            <div style="font-size:10px;color:#6B7570">الانتظام</div>
           </div>
           <div style="text-align:center;background:#FBF9F3;border-radius:10px;padding:10px">
             <div style="font-size:20px;font-weight:900;color:${remColor}">${rem}</div>
-            <div style="font-size:10px;color:#6B7A99">متبقي</div>
+            <div style="font-size:10px;color:#6B7570">متبقي</div>
           </div>
         </div>
 
         <!-- شريط التقدم -->
         <div style="margin-bottom:16px">
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7A99;margin-bottom:5px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7570;margin-bottom:5px">
             <span>استهلاك الحصص</span>
             <span>${att}/${s.sessions}</span>
           </div>
@@ -19352,8 +18614,8 @@ function renderParentPortal(children, parentPhone){
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
         <div>
-          <div style="font-size:11px;color:#6B7A99;margin-bottom:2px">${acad}</div>
-          <div style="font-size:18px;font-weight:900;color:#F0F4FF">بوابة ولي الأمر</div>
+          <div style="font-size:11px;color:#6B7570;margin-bottom:2px">${acad}</div>
+          <div style="font-size:18px;font-weight:900;color:#1F2A24">بوابة ولي الأمر</div>
         </div>
         <button onclick="parentLogout()"
           style="background:#FBF9F3;border:1px solid #EFEAE0;border-radius:10px;padding:8px 14px;color:#6B7570;cursor:pointer;font-family:'Cairo',sans-serif;font-size:12px">
@@ -19362,7 +18624,7 @@ function renderParentPortal(children, parentPhone){
       </div>
 
       <!-- Info strip -->
-      <div style="background:#FBF9F3;border:1px solid #EFEAE0;border-radius:12px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:#6B7A99;display:flex;align-items:center;gap:8px">
+      <div style="background:#FBF9F3;border:1px solid #EFEAE0;border-radius:12px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:#6B7570;display:flex;align-items:center;gap:8px">
         <span>👨‍👩‍👧</span>
         <span>${children.length} ${children.length===1?'طالب مسجّل':'طلاب مسجّلون'} بهذا الرقم</span>
         <span style="margin-right:auto;color:#9CA39D">${today}</span>
@@ -19526,7 +18788,7 @@ const PDF_STYLE = `
     margin-bottom: 16px;
   }
   .pdf-info-card {
-    background: #F8F9FF; border: 1px solid #1F2A24;
+    background: #F8F9FF; border: 1px solid #E7E2D6;
     border-radius: 8px; padding: 10px 14px;
   }
   .pdf-info-label { font-size: 10px; color: #6B7570; margin-bottom: 2px; }
@@ -19539,7 +18801,7 @@ const PDF_STYLE = `
   }
   .pdf-stat {
     text-align: center; background: #F8F9FF;
-    border: 1px solid #1F2A24; border-radius: 10px; padding: 12px 8px;
+    border: 1px solid #E7E2D6; border-radius: 10px; padding: 12px 8px;
   }
   .pdf-stat-val { font-size: 22px; font-weight: 900; }
   .pdf-stat-lbl { font-size: 10px; color: #6B7570; margin-top: 2px; }
@@ -19552,7 +18814,7 @@ const PDF_STYLE = `
     font-size: 11px; font-weight: 700;
   }
   .pdf-table td { padding: 8px 12px; border-bottom: 1px solid #F3F4F6; font-size: 11px; }
-  .pdf-table tr:nth-child(even) td { background: #1F2A24; }
+  .pdf-table tr:nth-child(even) td { background: #F7F5EF; }
   .pdf-table tr:last-child td { border-bottom: none; }
 
   /* Status badges */
@@ -19562,7 +18824,7 @@ const PDF_STYLE = `
 
   /* Footer */
   .pdf-footer {
-    border-top: 1px solid #1F2A24; padding-top: 12px; margin-top: 20px;
+    border-top: 1px solid #E7E2D6; padding-top: 12px; margin-top: 20px;
     text-align: center; font-size: 10px; color: #6B7570;
   }
   .pdf-watermark { color: #1F2A24; font-size: 10px; }
@@ -19707,7 +18969,7 @@ function printTeacherInvoicePDF(tid, mk){
       </div>
     </div>
 
-    <div style="font-size:13px;font-weight:800;margin-bottom:10px;color:#EFEAE0;border-right:4px solid #0F6E5C;padding-right:10px">
+    <div style="font-size:13px;font-weight:800;margin-bottom:10px;color:#1F2A24;border-right:4px solid #0F6E5C;padding-right:10px">
       تفصيل الحصص بالطالب — ${mLabel}
     </div>
     <table class="pdf-table">
@@ -19821,7 +19083,7 @@ function printStudentAccountPDF(sid){
       </div>
     </div>
 
-    <div style="font-size:13px;font-weight:800;margin:14px 0 8px;color:#EFEAE0;border-right:4px solid #059669;padding-right:10px">
+    <div style="font-size:13px;font-weight:800;margin:14px 0 8px;color:#1F2A24;border-right:4px solid #059669;padding-right:10px">
       سجل الحضور (${attRecords.length} سجل)
     </div>
     <table class="pdf-table">
@@ -19830,7 +19092,7 @@ function printStudentAccountPDF(sid){
     </table>
 
     ${pays.length?`
-    <div style="font-size:13px;font-weight:800;margin:14px 0 8px;color:#EFEAE0;border-right:4px solid #D97706;padding-right:10px">
+    <div style="font-size:13px;font-weight:800;margin:14px 0 8px;color:#1F2A24;border-right:4px solid #D97706;padding-right:10px">
       سجل المدفوعات — إجمالي: ${totalPaid.toLocaleString()} ${cur} من ${totalReq.toLocaleString()} ${cur}
     </div>
     <table class="pdf-table">
@@ -19931,7 +19193,7 @@ function renderCalendar(){
       <div style="display:flex;gap:3px;margin-top:4px;flex-wrap:wrap">
         ${att.present   ? `<span style="background:#0F6E5C14;color:#0F6E5C;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">${att.present} ✅</span>` : ''}
         ${att.absent    ? `<span style="background:#C64B3C14;color:#C64B3C;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">${att.absent} ❌</span>` : ''}
-        ${att.unexcused ? `<span style="background:#431407;color:#C08A1E;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">${att.unexcused} 🚫</span>` : ''}
+        ${att.unexcused ? `<span style="background:#C08A1E16;color:#C08A1E;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700">${att.unexcused} 🚫</span>` : ''}
       </div>` : '';
 
     const schedBadge = scheduled ? `<div style="font-size:9px;color:#9CA39D;margin-top:2px">📋 ${scheduled} طالب</div>` : '';
@@ -19985,7 +19247,7 @@ function renderCalendar(){
       ${[
         [mP,  'حاضر في الشهر', '#0F6E5C','#0F6E5C14'],
         [mA,  'غياب بعذر',     '#C64B3C','#C64B3C14'],
-        [mU,  'غياب بلا إشعار','#C08A1E','#431407'],
+        [mU,  'غياب بلا إشعار','#C08A1E','#C08A1E16'],
         [mRate+'%','معدل الحضور','#2A6F97','#EFEAE0'],
       ].map(([v,l,c,bg])=>`
         <div style="background:${bg};border:1px solid ${c}33;border-radius:12px;padding:12px;text-align:center">
@@ -20174,7 +19436,7 @@ function printMonthlyReportPDF(mk){
       </div>
     </div>
 
-    <div style="font-size:13px;font-weight:800;margin:14px 0 8px;color:#EFEAE0;border-right:4px solid #0F6E5C;padding-right:10px">
+    <div style="font-size:13px;font-weight:800;margin:14px 0 8px;color:#1F2A24;border-right:4px solid #0F6E5C;padding-right:10px">
       أداء المعلمين — ${mLabel}
     </div>
     <table class="pdf-table">
@@ -21004,8 +20266,8 @@ window.addEventListener('load', function v29Init(){
   padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
   margin-top: 8px;
 }
-.v30-hw-status.pending { background: rgba(184,137,43,.6); color: #9C7223; border: 1px solid rgba(184,137,43,.2); }
-.v30-hw-status.done { background: rgba(15,110,92,.6); color: #0F6E5C; border: 1px solid rgba(15,110,92,.2); }
+.v30-hw-status.pending { background: rgba(184,137,43,.12); color: #9C7223; border: 1px solid rgba(184,137,43,.2); }
+.v30-hw-status.done { background: rgba(15,110,92,.12); color: #0F6E5C; border: 1px solid rgba(15,110,92,.2); }
 
 /* ── Quran progress (enhanced) ── */
 .v30-quran-ring {
@@ -21029,10 +20291,10 @@ window.addEventListener('load', function v29Init(){
   align-items: center; justify-content: center;
   font-size: 9px; font-weight: 700; cursor: default;
 }
-.v30-surah-chip.memorized { background: rgba(15,110,92,.8); color: #0F6E5C; }
-.v30-surah-chip.reviewing { background: rgba(184,137,43,.8); color: #9C7223; }
+.v30-surah-chip.memorized { background: rgba(15,110,92,.12); color: #0F6E5C; }
+.v30-surah-chip.reviewing { background: rgba(184,137,43,.12); color: #9C7223; }
 .v30-surah-chip.partial   { background: rgba(239,234,224,.8); color: #2A6F97; }
-.v30-surah-chip.none      { background: rgba(231,226,214,.5); color: #EFEAE0; }
+.v30-surah-chip.none      { background: rgba(231,226,214,.5); color:#1F2A24; }
 
 /* ── Achievement badge (compact) ── */
 .v30-badge-row {
@@ -21060,10 +20322,10 @@ window.addEventListener('load', function v29Init(){
   padding: 12px 14px; border-radius: 14px; margin-bottom: 12px;
   font-size: 12px;
 }
-.v30-alert.warn { background: rgba(184,137,43,.6); color: #9C7223; border: 1px solid rgba(184,137,43,.2); }
-.v30-alert.err  { background: rgba(198,75,60,.6); color: #C64B3C; border: 1px solid rgba(198,75,60,.2); }
+.v30-alert.warn { background: rgba(184,137,43,.12); color: #9C7223; border: 1px solid rgba(184,137,43,.2); }
+.v30-alert.err  { background: rgba(198,75,60,.12); color: #C64B3C; border: 1px solid rgba(198,75,60,.2); }
 .v30-alert.info { background: rgba(239,234,224,.6); color: #2A6F97; border: 1px solid rgba(42,111,151,.2); }
-.v30-alert.suc  { background: rgba(15,110,92,.6);  color: #3FA98A; border: 1px solid rgba(15,110,92,.2); }
+.v30-alert.suc  { background: rgba(15,110,92,.1);  color: #0A4F42; border: 1px solid rgba(15,110,92,.2); }
 .v30-alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 .v30-alert-body { flex: 1; }
 .v30-alert-title { font-weight: 900; margin-bottom: 2px; }
@@ -21099,7 +20361,7 @@ window.addEventListener('load', function v29Init(){
 .v30-qnote-stars { color: #B8892B; font-size: 12px; }
 .v30-qnote-surahs { font-size: 12px; font-weight: 700; color: #2A6F97; margin-bottom: 4px; }
 .v30-qnote-text { font-size: 12px; color: #6B7570; line-height: 1.6; }
-.v30-qnote-hw { background: rgba(15,110,92,.4); border-radius: 8px; padding: 6px 10px; margin-top: 6px; font-size: 11px; color: #3FA98A; }
+.v30-qnote-hw { background: rgba(15,110,92,.1); border-radius: 8px; padding: 6px 10px; margin-top: 6px; font-size: 11px; color: #0A4F42; }
 
 /* ═══════════ V30 — PARENT PORTAL ENHANCEMENTS ═══════════ */
 
@@ -21652,7 +20914,7 @@ function v30RenderStudentPortal(s){
     </div>
 
     <!-- Footer contact -->
-    <div style="text-align:center;color:#EFEAE0;font-size:11px;margin-top:24px;padding:0 16px">
+    <div style="text-align:center;color:#1F2A24;font-size:11px;margin-top:24px;padding:0 16px">
       <div style="margin-bottom:6px">🏫 ${esc(acad)}</div>
       ${db.settings?.phone?`<div>📞 ${db.settings.phone}</div>`:''}
     </div>
@@ -21710,7 +20972,7 @@ function v30RenderParentPortal(children, parentPhone){
         <span style="color:${col};font-weight:700">${lbl}</span>
         ${a.note?`<span style="color:#9CA39D;font-size:10px">${esc(a.note)}</span>`:''}
       </div>`;
-    }).join('') || '<div style="text-align:center;color:#EFEAE0;padding:10px;font-size:11px">لا سجلات بعد</div>';
+    }).join('') || '<div style="text-align:center;color:#1F2A24;padding:10px;font-size:11px">لا سجلات بعد</div>';
 
     // Latest quran note
     const latestQNote = qNotes[0];
@@ -21720,7 +20982,7 @@ function v30RenderParentPortal(children, parentPhone){
           ${latestQNote.surahs?`<div style="font-size:12px;font-weight:700;color:#2A6F97">📖 ${esc(latestQNote.surahs)}</div>`:''}
           ${latestQNote.stars?`<div style="color:#B8892B;font-size:12px">${'★'.repeat(latestQNote.stars)}</div>`:''}
           ${latestQNote.note?`<div style="font-size:11px;color:#6B7570;margin-top:3px">${esc(latestQNote.note)}</div>`:''}
-          ${latestQNote.hw?`<div style="background:rgba(15,110,92,.4);border-radius:7px;padding:5px 8px;margin-top:6px;font-size:11px;color:#3FA98A">📌 واجب: ${esc(latestQNote.hw)}</div>`:''}
+          ${latestQNote.hw?`<div style="background:rgba(15,110,92,.1);border-radius:7px;padding:5px 8px;margin-top:6px;font-size:11px;color:#0A4F42">📌 واجب: ${esc(latestQNote.hw)}</div>`:''}
         </div>` : '';
 
     // Alerts for this child
@@ -21906,7 +21168,7 @@ function v30RenderParentPortal(children, parentPhone){
     <!-- Academy contact -->
     ${acPhone?`<a href="https://wa.me/${acPhone.replace(/\D/g,'')}" target="_blank" class="v30-wa-btn" style="text-decoration:none;margin-top:0">🏫 تواصل مع الأكاديمية</a>`:''}
 
-    <div style="text-align:center;color:#EFEAE0;font-size:11px;margin-top:20px">
+    <div style="text-align:center;color:#1F2A24;font-size:11px;margin-top:20px">
       ${esc(acad)}${db.settings?.phone?' · '+db.settings.phone:''}
     </div>
     </div>
@@ -22061,7 +21323,7 @@ window.openStudentReceipt = function(payId){
 <style>
   @page{size:A4;margin:15mm 20mm}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Cairo',sans-serif;direction:rtl;color:#F0EDE3;font-size:13px;background:#fff}
+  body{font-family:'Cairo',sans-serif;direction:rtl;color:#1F2A24;font-size:13px;background:#fff}
 
   /* ── الرأس ── */
   .header{
@@ -22117,7 +21379,7 @@ window.openStudentReceipt = function(payId){
     margin-top:6px;padding-top:12px;
     font-size:16px;font-weight:900;
   }
-  .finance-key{color:#EFEAE0}
+  .finance-key{color:#1F2A24}
   .finance-val{font-weight:800}
 
   /* ── شريط التقدم ── */
@@ -22138,7 +21400,7 @@ window.openStudentReceipt = function(payId){
 
   /* ── جدول الدفعات ── */
   .log-section{margin-bottom:20px}
-  .log-title{font-size:13px;font-weight:900;color:#EFEAE0;margin-bottom:10px;display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:2px solid #e5e7eb}
+  .log-title{font-size:13px;font-weight:900;color:#1F2A24;margin-bottom:10px;display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:2px solid #e5e7eb}
   table{width:100%;border-collapse:collapse;font-size:12px}
   th{background:#0F6E5C;color:#fff;padding:9px 12px;text-align:right;font-weight:700}
   th:first-child{border-radius:0 8px 0 0}
@@ -22163,7 +21425,7 @@ window.openStudentReceipt = function(payId){
   .sig-box{flex:1;text-align:center}
   .sig-line{border-bottom:2px solid #d1d5db;width:140px;margin:0 auto 8px}
   .sig-name{font-size:11px;color:#6B7570}
-  .sig-title{font-size:12px;font-weight:700;color:#EFEAE0;margin-top:2px}
+  .sig-title{font-size:12px;font-weight:700;color:#1F2A24;margin-top:2px}
 
   /* ── الذيل ── */
   footer{
@@ -22200,7 +21462,7 @@ window.openStudentReceipt = function(payId){
     display:flex;align-items:center;gap:8px;
   }
   .print-btn.green{background:#0A4F42;color:#fff}
-  .print-btn.gray{background:#e5e7eb;color:#EFEAE0}
+  .print-btn.gray{background:#e5e7eb;color:#1F2A24}
   .print-btn.blue{background:#0F6E5C;color:#fff}
 </style>
 </head>
@@ -22425,7 +21687,7 @@ window.v19Contract = function(sid){
 <style>
   @page{size:A4;margin:18mm 22mm}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Cairo',sans-serif;direction:rtl;color:#F0EDE3;font-size:13px;background:#fff}
+  body{font-family:'Cairo',sans-serif;direction:rtl;color:#1F2A24;font-size:13px;background:#fff}
 
   /* ── الرأس ── */
   .header{
@@ -22507,7 +21769,7 @@ window.v19Contract = function(sid){
   .sig-col{flex:1;text-align:center}
   .sig-label{font-size:11px;color:#6B7570;margin-bottom:10px;font-weight:700}
   .sig-line{border-bottom:2px solid #d1d5db;width:160px;margin:0 auto 8px;height:50px}
-  .sig-name{font-size:13px;font-weight:900;color:#EFEAE0}
+  .sig-name{font-size:13px;font-weight:900;color:#1F2A24}
   .sig-date{font-size:10px;color:#6B7570;margin-top:4px}
 
   /* ── الختم ── */
@@ -22552,7 +21814,7 @@ window.v19Contract = function(sid){
     display:flex;align-items:center;gap:8px;
   }
   .print-btn.gold{background:linear-gradient(135deg,#9C7223,#B45309);color:#fff}
-  .print-btn.gray{background:#e5e7eb;color:#EFEAE0}
+  .print-btn.gray{background:#e5e7eb;color:#1F2A24}
 </style>
 </head>
 <body>
@@ -22576,9 +21838,9 @@ window.v19Contract = function(sid){
   <div style="text-align:left">
     <div class="e-badge">⚡ عقد إلكتروني موقّع</div>
     <div style="font-size:10px;color:#6B7570">رقم العقد</div>
-    <div style="font-family:monospace;font-size:12px;color:#EFEAE0;font-weight:700;margin-bottom:4px">${contractNum}</div>
+    <div style="font-family:monospace;font-size:12px;color:#1F2A24;font-weight:700;margin-bottom:4px">${contractNum}</div>
     <div style="font-size:10px;color:#6B7570">تاريخ الإصدار</div>
-    <div style="font-size:11px;color:#EFEAE0">${today}</div>
+    <div style="font-size:11px;color:#1F2A24">${today}</div>
   </div>
 </div>
 
@@ -22841,12 +22103,12 @@ window.v33PrintTeacherContract=function(tid){
   const stampH=cfg.stampImage?'<img src="'+cfg.stampImage+'" style="width:105px;height:105px;object-fit:contain;opacity:.92">':"<div style='width:105px;height:105px;border-radius:50%;border:3px dashed #C4B5FD;display:flex;align-items:center;justify-content:center;color:#6B7570;font-size:11px;text-align:center'>ختم<br>الأكاديمية</div>";
   const wmStamp=cfg.stampImage?'<div style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%) rotate(-20deg);opacity:.05"><img src="'+cfg.stampImage+'" style="width:260px;height:260px;object-fit:contain"></div>':'';
   const eSign=isSigned?'<div><div style="font-family:Cairo,sans-serif;font-size:17px;font-weight:900;color:#0F6E5C;border-bottom:2px solid #0F6E5C;padding-bottom:3px;display:inline-block">'+t.name+'</div><div style="font-size:10px;color:#6B7570;margin-top:4px">✅ وافق إلكترونياً — '+signDate+'</div><div style="font-size:10px;color:#6B7570">الكود: '+t.id+'</div></div>':"<div style='color:#6B7570;font-size:11px;font-style:italic'>لم تتم الموافقة الإلكترونية</div>";
-  const studRows=myStus.length?"<div style='display:flex;flex-wrap:wrap;gap:6px'>"+myStus.map(s=>"<span style='background:#F3F4F6;border:1px solid #1F2A24;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700'>"+s.name+" <span style='color:#6B7570'>("+s.id+")</span></span>").join('')+"</div>":"<span style='color:#6B7570;font-size:11px'>لا يوجد طلاب مسندون</span>";
+  const studRows=myStus.length?"<div style='display:flex;flex-wrap:wrap;gap:6px'>"+myStus.map(s=>"<span style='background:#F3F4F6;border:1px solid #E7E2D6;border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700'>"+s.name+" <span style='color:#6B7570'>("+s.id+")</span></span>").join('')+"</div>":"<span style='color:#6B7570;font-size:11px'>لا يوجد طلاب مسندون</span>";
   const p=cfg.phone?'<div class="ac">📞 '+cfg.phone+'</div>':'';
   const a=cfg.address?'<div class="ac">📍 '+cfg.address+'</div>':'';
   const html='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>عقد عمل — '+t.name+'</title>'
     +'<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">'
-    +'<style>@page{size:A4;margin:14mm 18mm}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Cairo,sans-serif;direction:rtl;color:#F0EDE3;font-size:12px;line-height:1.8;background:#fff}'
+    +'<style>@page{size:A4;margin:14mm 18mm}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Cairo,sans-serif;direction:rtl;color:#1F2A24;font-size:12px;line-height:1.8;background:#fff}'
     +'.wmw{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}'
     +'.wmt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:65px;font-weight:900;color:rgba(15,110,92,.05);white-space:nowrap;font-family:Cairo,sans-serif}'
     +'.wml{position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,transparent,transparent 55px,rgba(15,110,92,.015) 55px,rgba(15,110,92,.015) 56px)}'
@@ -22856,19 +22118,19 @@ window.v33PrintTeacherContract=function(tid){
     +'.lb{display:flex;align-items:center;gap:12px}.an{font-size:20px;font-weight:900;color:#0F6E5C}.as{font-size:11px;color:#6B7570;margin-top:2px}.ac{font-size:10px;color:#6B7570;margin-top:2px}'
     +'.mb{background:#F5F3FF;border:1px solid #C4B5FD;border-radius:12px;padding:11px 14px;min-width:190px;text-align:left}'
     +'.eb{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#0F6E5C,#5B21B6);color:#fff;border-radius:20px;padding:3px 11px;font-size:10px;font-weight:700;margin-bottom:6px}'
-    +'.mr{font-size:10px;color:#6B7570;display:flex;justify-content:space-between;gap:8px;margin-top:3px}.mr strong{color:#EFEAE0}'
+    +'.mr{font-size:10px;color:#6B7570;display:flex;justify-content:space-between;gap:8px;margin-top:3px}.mr strong{color:#1F2A24}'
     +'.ct{text-align:center;margin:15px 0;padding:13px;background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:2px solid #0F6E5C;border-radius:14px}'
     +'.ct h1{font-size:21px;font-weight:900;color:#5B21B6;margin-bottom:3px}.ct p{font-size:11px;color:#0F6E5C}'
     +'.pts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}'
-    +'.pb{background:#FAFAFA;border:1px solid #1F2A24;border-radius:12px;padding:12px;position:relative;overflow:hidden}'
+    +'.pb{background:#FAFAFA;border:1px solid #E7E2D6;border-radius:12px;padding:12px;position:relative;overflow:hidden}'
     +'.pb::before{content:"";position:absolute;top:0;right:0;width:4px;height:100%}.p1::before{background:linear-gradient(180deg,#0F6E5C,#5B21B6)}.p2::before{background:linear-gradient(180deg,#9C7223,#B45309)}'
     +'.pl{font-size:10px;font-weight:700;color:#6B7570;margin-bottom:5px;letter-spacing:.5px}.pn{font-size:14px;font-weight:900;color:#111;margin-bottom:4px}.pd{font-size:11px;color:#9CA39D;margin-top:2px}'
-    +'.sec{margin-bottom:13px;border:1px solid #1F2A24;border-radius:12px;overflow:hidden}'
+    +'.sec{margin-bottom:13px;border:1px solid #E7E2D6;border-radius:12px;overflow:hidden}'
     +'.sh{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);padding:9px 13px;font-size:12px;font-weight:900;color:#5B21B6;border-bottom:1px solid #C4B5FD}'
     +'.sb{padding:11px 13px}.rw{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F3F4F6;font-size:11px}.rw:last-child{border:none}.rk{color:#6B7570}.rv{font-weight:700;color:#111;text-align:left}'
-    +'.trm{background:#FAFAFA;border:1px solid #C4B5FD;border-radius:12px;padding:13px;margin-bottom:13px}'
-    +'.th{font-size:12px;font-weight:900;color:#5B21B6;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid #C4B5FD}'
-    +'.tb{font-size:11px;color:#EFEAE0;line-height:2.1;white-space:pre-line}'
+    +'.trm{background:#FBF9F3;border:1px solid #B8892B44;border-radius:12px;padding:13px;margin-bottom:13px}'
+    +'.th{font-size:12px;font-weight:900;color:#9C7223;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid #B8892B44}'
+    +'.tb{font-size:11px;color:#1F2A24;line-height:2.1;white-space:pre-line}'
     +'.con{background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;padding:12px 14px;margin-bottom:13px}'
     +'.cn{font-size:12px;font-weight:900;color:#0369A1;margin-bottom:5px}.cb{font-size:11px;color:#0C4A6E;line-height:1.9}'
     +'.sigs{display:flex;justify-content:space-around;align-items:flex-end;margin-top:20px;gap:13px;flex-wrap:wrap}'
@@ -22876,7 +22138,7 @@ window.v33PrintTeacherContract=function(tid){
     +'.sl{border-bottom:2px solid #4A5750;width:150px;margin:0 auto 7px;height:52px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px}'
     +'.sd{font-size:10px;color:#6B7570;margin-top:3px}'
     +'.en{background:#F5F3FF;border:1px solid #C4B5FD;border-radius:10px;padding:9px 13px;margin-top:12px;font-size:10px;color:#5B21B6;text-align:center;line-height:1.8}'
-    +'footer{margin-top:12px;font-size:10px;color:#6B7570;border-top:1px solid #1F2A24;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px}'
+    +'footer{margin-top:12px;font-size:10px;color:#6B7570;border-top:1px solid #E7E2D6;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px}'
     +'@media print{.np{display:none!important}body{padding:0}}</style></head><body>'
     +'<div class="wmw"><div class="wml"></div><div class="wmt">عقد عمل — '+AN+'</div>'+wmStamp+'<div class="wmn">'+cNum+' — '+tISO+'</div></div>'
     +'<div class="pg">'
@@ -22914,7 +22176,7 @@ window.v33PrintTeacherContract=function(tid){
     +'<div class="en">⚡ عقد عمل إلكتروني — '+AN+' — رقم: '+cNum+(isSigned?' — موافق: '+signDate:' — بانتظار الموافقة')+'</div>'
     +'<footer><span>'+AN+' — '+AS+'</span><span>رقم العقد: '+cNum+'</span><span>إصدار: '+tISO+'</span></footer>'
     +'</div>'
-    +'<div class="np" style="position:sticky;bottom:0;display:flex;gap:10px;justify-content:center;padding:14px;background:#1F2A24;border-top:1px solid #1F2A24">'
+    +'<div class="np" style="position:sticky;bottom:0;display:flex;gap:10px;justify-content:center;padding:14px;background:#1F2A24;border-top:1px solid #E7E2D6">'
     +'<button onclick="window.print()" style="background:linear-gradient(135deg,#0F6E5C,#0A4F42);color:#fff;border:none;border-radius:10px;padding:11px 26px;font-family:Cairo,sans-serif;font-size:13px;font-weight:900;cursor:pointer">🖨️ طباعة</button>'
     +'<button onclick="window.close()" style="background:#1F2A24;color:#EFEAE0;border:none;border-radius:10px;padding:11px 18px;font-family:Cairo,sans-serif;font-size:13px;font-weight:700;cursor:pointer">✕ إغلاق</button>'
     +'</div><script>window.onload=()=>setTimeout(()=>window.print(),500);<\/script></body></html>';
@@ -23016,13 +22278,13 @@ window.v33TInvoice=function(tid,mk2){
     +'.an{font-size:19px;font-weight:900;color:#9C7223}.as{font-size:11px;color:#6B7570}.ac{font-size:10px;color:#6B7570;margin-top:2px}'
     +'.ib{background:#FBF6E9;border:1px solid #E9D8AE;border-radius:12px;padding:10px 13px;min-width:185px;text-align:left}'
     +'.pts{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px}'
-    +'.pb{background:#FAFAFA;border:1px solid #1F2A24;border-radius:12px;padding:11px}.pl{font-size:10px;color:#6B7570;font-weight:700;margin-bottom:4px}.pn{font-size:14px;font-weight:900;margin-bottom:3px}.pd{font-size:11px;color:#9CA39D;margin-top:2px}'
-    +'.sec{margin-bottom:12px;border:1px solid #1F2A24;border-radius:12px;overflow:hidden}'
+    +'.pb{background:#FAFAFA;border:1px solid #E7E2D6;border-radius:12px;padding:11px}.pl{font-size:10px;color:#6B7570;font-weight:700;margin-bottom:4px}.pn{font-size:14px;font-weight:900;margin-bottom:3px}.pd{font-size:11px;color:#9CA39D;margin-top:2px}'
+    +'.sec{margin-bottom:12px;border:1px solid #E7E2D6;border-radius:12px;overflow:hidden}'
     +'.sh{background:#FBF6E9;padding:8px 13px;font-size:12px;font-weight:900;color:#92400E;border-bottom:1px solid #E9D8AE}'
     +'table{width:100%;border-collapse:collapse;font-size:11px}th{background:#FBF6E9;padding:7px 10px;text-align:right;font-weight:700;color:#6B7570;border-bottom:1px solid #E9D8AE}td{padding:6px 10px;border-bottom:1px solid #F3F4F6}tr:nth-child(even) td{background:#FBF6E933}'
     +'.tot{background:linear-gradient(135deg,#FBF6E9,#FEF3C7);border:2px solid #9C7223;border-radius:12px;padding:13px;margin-bottom:12px}'
     +'.tr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #E9D8AE;font-size:11px}.tr:last-child{border:none;padding-top:8px}'
-    +'footer{margin-top:12px;font-size:10px;color:#6B7570;border-top:1px solid #1F2A24;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px}'
+    +'footer{margin-top:12px;font-size:10px;color:#6B7570;border-top:1px solid #E7E2D6;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px}'
     +'@media print{.np{display:none!important}body{padding:0}}</style></head><body>'
     +'<div class="wm">فاتورة راتب</div><div class="pg">'
     +'<div class="hdr"><div style="display:flex;align-items:center;gap:10px">'+logoH+'<div><div class="an">'+AN+'</div><div class="as">'+(cfg.academySubtitle||'')+'</div>'+(cfg.phone?'<div class="ac">📞 '+cfg.phone+'</div>':'')+'</div></div>'
@@ -23130,7 +22392,7 @@ window.v33AllSummary=function(){
     const due=getTeacherDueForRecords(t.id, mk);const paid=rec.paid||0;const rem=due-paid;
     gD+=due;gP+=paid;gS+=sess;
     const sc=rem<=0?'#0A4F42':rem<due?'#9C7223':'#B23A2C';
-    return'<tr style="background:'+(i%2===0?'#fff':'#1F2A24')+'">'
+    return'<tr style="background:'+(i%2===0?'#fff':'#F7F5EF')+'">'
       +'<td style="font-weight:700">'+t.name+'</td><td style="text-align:center;color:#6B7570;font-size:10px">'+t.id+'</td>'
       +'<td style="text-align:center">'+db.students.filter(s=>s.teacherId===t.id).length+'</td>'
       +'<td style="text-align:center;color:#0284C7;font-weight:700">'+sess+'</td>'
@@ -23145,9 +22407,9 @@ window.v33AllSummary=function(){
     +'<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Cairo,sans-serif;direction:rtl;padding:18px;font-size:12px}'
     +'.hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #0F6E5C;padding-bottom:11px;margin-bottom:14px}'
     +'.sm{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}'
-    +'.si{border:1px solid #1F2A24;border-radius:10px;padding:10px;text-align:center}.sv{font-size:20px;font-weight:900}.sl{font-size:10px;color:#6B7570;margin-top:2px}'
-    +'table{width:100%;border-collapse:collapse}th{background:#0F6E5C;color:#fff;padding:7px 9px;text-align:right;font-size:11px}td{padding:6px 9px;border-bottom:1px solid #1F2A24;font-size:11px}'
-    +'tfoot tr{background:#F3F4F6;font-weight:900}footer{margin-top:12px;text-align:center;font-size:10px;color:#6B7570;border-top:1px solid #1F2A24;padding-top:10px}'
+    +'.si{border:1px solid #E7E2D6;border-radius:10px;padding:10px;text-align:center}.sv{font-size:20px;font-weight:900}.sl{font-size:10px;color:#6B7570;margin-top:2px}'
+    +'table{width:100%;border-collapse:collapse}th{background:#0F6E5C;color:#fff;padding:7px 9px;text-align:right;font-size:11px}td{padding:6px 9px;border-bottom:1px solid #E7E2D6;font-size:11px}'
+    +'tfoot tr{background:#F3F4F6;font-weight:900}footer{margin-top:12px;text-align:center;font-size:10px;color:#6B7570;border-top:1px solid #E7E2D6;padding-top:10px}'
     +'@media print{body{padding:8px}.np{display:none!important}}</style></head><body>'
     +'<div class="hdr"><div style="display:flex;align-items:center;gap:10px">'+logoH+'<div><div style="font-size:18px;font-weight:900;color:#0F6E5C">'+AN+'</div></div></div>'
     +'<div style="text-align:left"><div style="font-size:14px;font-weight:900;color:#0F6E5C">📊 كشف رواتب المعلمين</div><div style="font-size:11px;color:#6B7570;margin-top:3px">'+_mName(mk)+' — '+tISO+'</div></div></div>'
@@ -23236,11 +22498,11 @@ window.v33StudentReport=function(sid,mk2){
     +'.sh{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:2px solid #0A4F42;border-radius:14px;padding:15px;margin-bottom:15px;display:flex;align-items:center;gap:13px}'
     +'.av{width:55px;height:55px;border-radius:50%;background:linear-gradient(135deg,#0A4F42,#0F6E5C);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}'
     +'.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:13px}'
-    +'.kpi{border:1px solid #1F2A24;border-radius:12px;padding:11px;text-align:center}.kv{font-size:21px;font-weight:900;margin-bottom:2px}.kl{font-size:10px;color:#6B7570}'
+    +'.kpi{border:1px solid #E7E2D6;border-radius:12px;padding:11px;text-align:center}.kv{font-size:21px;font-weight:900;margin-bottom:2px}.kl{font-size:10px;color:#6B7570}'
     +'.pb2{background:#F0FDF4;border:1px solid #3FA98A;border-radius:12px;padding:13px;margin-bottom:13px}'
     +'.pbb{height:13px;background:#DCFCE7;border-radius:99px;overflow:hidden;margin:7px 0 4px}'
     +'.pbf{height:100%;border-radius:99px;background:linear-gradient(90deg,'+bClr+','+bClr+'BB);width:'+pct+'%}'
-    +'.sec{margin-bottom:13px;border:1px solid #1F2A24;border-radius:12px;overflow:hidden}'
+    +'.sec{margin-bottom:13px;border:1px solid #E7E2D6;border-radius:12px;overflow:hidden}'
     +'.shd{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);padding:9px 13px;font-size:12px;font-weight:900;color:#0A4F42;border-bottom:1px solid #3FA98A}'
     +'table{width:100%;border-collapse:collapse;font-size:11px}th{background:#F0FDF4;padding:7px 10px;text-align:right;font-weight:700;color:#6B7570;border-bottom:1px solid #3FA98A}td{padding:6px 10px;border-bottom:1px solid #F3F4F6}'
     +'.fin{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:13px}'
@@ -23249,7 +22511,7 @@ window.v33StudentReport=function(sid,mk2){
     +'.sigs{display:flex;justify-content:space-around;align-items:flex-end;margin-top:16px;gap:13px;flex-wrap:wrap}'
     +'.sg{text-align:center;flex:1}.sgl2{font-size:10px;color:#6B7570;margin-bottom:7px;font-weight:700}'
     +'.sl2{border-bottom:1px solid #4A5750;width:125px;margin:0 auto 6px;height:42px;display:flex;align-items:flex-end;justify-content:center}'
-    +'footer{margin-top:12px;font-size:10px;color:#6B7570;border-top:1px solid #1F2A24;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px}'
+    +'footer{margin-top:12px;font-size:10px;color:#6B7570;border-top:1px solid #E7E2D6;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px}'
     +'@media print{.np{display:none!important}body{padding:0}}</style></head><body>'
     +'<div class="wm">'+(isAll?'تقرير الحصص المنفّذة':'تقرير أداء شهري')+'</div><div class="pg">'
     +'<div class="hdr"><div style="display:flex;align-items:center;gap:10px">'+logoH+'<div><div class="an">'+AN+'</div><div class="as">'+escapeHtml(cfg.academySubtitle||'')+'</div>'+(cfg.phone?'<div class="ac">📞 '+escapeHtml(cfg.phone)+'</div>':'')+'</div></div>'
@@ -23345,11 +22607,11 @@ window.v33PrintWeekly=function(){
     +'<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Cairo,sans-serif;direction:rtl;padding:16px;font-size:12px}'
     +'.hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #0F6E5C;padding-bottom:12px;margin-bottom:14px}'
     +'table.cal{width:100%;border-collapse:separate;border-spacing:0}'
-    +'footer{margin-top:13px;text-align:center;font-size:10px;color:#6B7570;border-top:1px solid #1F2A24;padding-top:10px}'
+    +'footer{margin-top:13px;text-align:center;font-size:10px;color:#6B7570;border-top:1px solid #E7E2D6;padding-top:10px}'
     +'@media print{body{padding:8px}.np{display:none!important}}</style></head><body>'
     +'<div class="hdr"><div style="display:flex;align-items:center;gap:10px">'+logoH+'<div><div style="font-size:18px;font-weight:900;color:#0F6E5C">'+AN+'</div><div style="font-size:11px;color:#6B7570">'+(cfg.academySubtitle||'')+'</div></div></div>'
     +'<div style="text-align:left"><div style="font-size:15px;font-weight:900;color:#0F6E5C">📅 الجدول الأسبوعي</div><div style="font-size:11px;color:#6B7570;margin-top:3px">'+tSess+' حصة أسبوعياً — '+tISO+'</div></div></div>'
-    +(legend?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:13px;padding:9px;background:#1F2A24;border-radius:10px;border:1px solid #1F2A24"><span style="font-size:10px;color:#6B7570;margin-left:5px;align-self:center">المعلمون:</span>'+legend+'</div>':'')
+    +(legend?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:13px;padding:9px;background:#FBF9F3;border-radius:10px;border:1px solid #E7E2D6"><span style="font-size:10px;color:#6B7570;margin-left:5px;align-self:center">المعلمون:</span>'+legend+'</div>':'')
     +'<table class="cal"><tbody><tr>'+cols+'</tr></tbody></table>'
     +'<footer>'+AN+' — الجدول الأسبوعي — '+tISO+'</footer>'
     +'<script>window.onload=()=>setTimeout(()=>window.print(),400);<\/script></body></html>';
@@ -23475,9 +22737,9 @@ window.openAddPay = function(){
       </div>
       <div id="v37_calc" style="background:var(--surface2);border-radius:12px;padding:11px 14px;margin-bottom:14px;display:flex;justify-content:space-around;text-align:center">
         <div><div id="v37c_req" style="font-size:16px;font-weight:900;color:#6B7570">0</div><div style="font-size:10px;color:#6B7570">مطلوب</div></div>
-        <div style="color:#EFEAE0;font-size:18px;padding-top:2px">→</div>
+        <div style="color:#1F2A24;font-size:18px;padding-top:2px">→</div>
         <div><div id="v37c_paid" style="font-size:16px;font-weight:900;color:#0F6E5C">0</div><div style="font-size:10px;color:#6B7570">مدفوع</div></div>
-        <div style="color:#EFEAE0;font-size:18px;padding-top:2px">=</div>
+        <div style="color:#1F2A24;font-size:18px;padding-top:2px">=</div>
         <div><div id="v37c_rem" style="font-size:16px;font-weight:900;color:#C64B3C">0</div><div style="font-size:10px;color:#6B7570">متبقي</div></div>
       </div>
       <div style="margin-bottom:14px">
@@ -23644,7 +22906,7 @@ body{font-family:'Cairo',sans-serif;direction:rtl;background:#f1f5f9;color:#111;
 .tr{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #e5e7eb22}
 .tr:last-child{border:none}
 .tr.big{border-top:2px solid #0A4F4222;margin-top:6px;padding-top:9px;font-size:15px;font-weight:900}
-.log-title{font-size:12px;font-weight:700;color:#EFEAE0;margin-bottom:6px}
+.log-title{font-size:12px;font-weight:700;color:#1F2A24;margin-bottom:6px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead tr{background:#0A4F42}
 thead th{padding:8px 10px;text-align:right;color:#fff;font-weight:700}
@@ -24314,21 +23576,9 @@ self.addEventListener('fetch', e => {
   /* السماح بالتمرير حتى لو كان overflow:hidden مضبوطاً عبر JS ── */
   .table-wrap > table { min-width: 500px !important; }
 
-  /* ── إصلاح بطاقات الاختبارات ── */
-  #tab-exams .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  #tab-exams .section-header { flex-direction: column !important; }
-
   /* ── إصلاح صفحة المصاريف ── */
   #tab-expenses .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
   #tab-expenses [style*="grid-template-columns"] {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* ── إصلاح صفحة الخصومات ── */
-  #tab-discounts .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-
-  /* ── إصلاح صفحة قائمة الانتظار ── */
-  #tab-waitlist [style*="grid-template-columns"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
@@ -24356,14 +23606,6 @@ self.addEventListener('fetch', e => {
   .v23s-week-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
-
-  /* ── إصلاح أزرار طلبات المعلمين ── */
-  #tab-pending .section-header { flex-direction: column !important; }
-  #tab-pending .btn { font-size: 12px !important; }
-
-  /* ── تحسين قراءة الشبكة في صفحة تقدم القرآن ── */
-  #tab-quran .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  #tab-quran .section-header { flex-direction: column !important; }
 
   /* ── إصلاح شريط أدوات المزامنة ── */
   .data-toolbar {
