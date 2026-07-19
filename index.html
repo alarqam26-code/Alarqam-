@@ -150,7 +150,28 @@
   .nav-btn.active{background:linear-gradient(135deg,#0F6E5C14,#B8892B16);color:#3FA98A;border:1px solid #0A4F4233}
   .nav-btn.active .nav-icon{color:var(--green)}
   .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+  .nav-section-lbl{
+    font-size:10.5px;font-weight:800;color:var(--faint,#9CA39D);
+    text-transform:uppercase;letter-spacing:.5px;
+    padding:14px 14px 6px;
+  }
+  .nav-section-lbl:first-child{padding-top:4px}
   .nav-divider{height:1px;background:var(--border);margin:4px 8px}
+
+  /* Mobile "More" menu — grouped sections */
+  .mm-section-lbl{
+    font-size:11px;font-weight:800;color:var(--muted);
+    margin:16px 2px 8px;
+  }
+  .mm-section-lbl:first-child{margin-top:0}
+  .mm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
+  .mm-btn{
+    padding:14px;border-radius:14px;background:var(--surface);
+    border:1px solid var(--border);color:var(--text);
+    font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+    cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;
+  }
+  .mm-icon{font-size:22px}
   .nav-logout{
     display:flex;align-items:center;gap:12px;padding:11px 14px;
     border-radius:10px;border:none;background:transparent;
@@ -225,13 +246,13 @@
 
   /* Buttons */
   .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;transition:all .2s;white-space:nowrap}
-  .btn-green{background:linear-gradient(135deg,#0A4F42,#15803D);color:#fff}
+  .btn-green{background:linear-gradient(135deg,#0F6E5C,#0A4F42);color:#fff}
   .btn-green:hover{opacity:.9}
-  .btn-gold{background:linear-gradient(135deg,#9C7223,#B45309);color:#fff}
+  .btn-gold{background:linear-gradient(135deg,#B8892B,#9C7223);color:#fff}
   .btn-gold:hover{opacity:.9}
-  .btn-blue{background:linear-gradient(135deg,#2563EB,#0F6E5C);color:#fff}
+  .btn-blue{background:linear-gradient(135deg,#2A6F97,#1F5578);color:#fff}
   .btn-blue:hover{opacity:.9}
-  .btn-purple{background:linear-gradient(135deg,#0F6E5C,#0A4F42);color:#fff}
+  .btn-purple{background:linear-gradient(135deg,#8B6F47,#6B5537);color:#fff}
   .btn-purple:hover{opacity:.9}
   .btn-gray{background:var(--surface2);color:var(--muted)}
   .btn-gray:hover{background:var(--surface3);color:var(--text)}
@@ -1059,10 +1080,6 @@
   /* ── v17 pill badge ── */
   .v17-badge{background:linear-gradient(135deg,#0A4F42,#9C7223);color:#fff;font-size:9px;padding:2px 6px;border-radius:8px;font-weight:900;margin-right:4px}
 
-  /* ── Teacher accent buttons ── */
-  .btn-purple{background:linear-gradient(135deg,#0F6E5C,#0A4F42);color:#fff}
-  .btn-purple:hover{background:linear-gradient(135deg,#0A4F42,#5B21B6)}
-
   /* ── Progress bar animated ── */
   .progress-bar-v17{height:8px;background:var(--surface2);border-radius:10px;overflow:hidden}
   .progress-fill-v17{height:100%;border-radius:10px;transition:width 1s cubic-bezier(.4,0,.2,1)}
@@ -1179,8 +1196,8 @@
   .fab:hover{transform:scale(1.1)}
   .fab-menu{position:fixed;bottom:86px;left:20px;display:none;flex-direction:column;gap:8px;z-index:200}
   .fab-menu.open{display:flex}
-  .fab-item{display:flex;align-items:center;gap:10px;background:#E7E2D6;border:1px solid #EFEAE0;border-radius:12px;padding:10px 14px;cursor:pointer;font-size:13px;white-space:nowrap;box-shadow:0 4px 12px rgba(31,42,36,.08);transition:all .15s;font-family:'Cairo',sans-serif;color:#fff}
-  .fab-item:hover{background:#EFEAE0}
+  .fab-item{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;font-size:13px;white-space:nowrap;box-shadow:0 4px 12px rgba(31,42,36,.08);transition:all .15s;font-family:'Cairo',sans-serif;color:var(--text)}
+  .fab-item:hover{background:var(--surface2)}
   .pay-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface2);border-radius:12px;margin-bottom:8px;flex-wrap:wrap;transition:background .15s}
   .pay-row:hover{background:var(--surface3)}
   /* Touch-friendly tap targets */
@@ -2276,9 +2293,6 @@ html, body {
       <button onclick="doParentLogin()" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#D97706,#B45309);color:#fff;font-family:'Cairo',sans-serif;font-size:15px;font-weight:900;cursor:pointer">👨‍👩‍👧 عرض أبنائي</button>
     </div>
     <div style="text-align:center;margin-top:20px;font-size:10px;color:#9CA39D">🔒 اتصال آمن ومشفّر</div>
-    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #E7E2D6;text-align:center">
-      <button onclick="clearAllDataNow()" style="background:transparent;border:1px solid #C64B3C33;border-radius:8px;color:#C64B3C;font-size:12px;font-family:'Cairo',sans-serif;padding:8px 16px;cursor:pointer">🗑️ مسح كل البيانات من المتصفح</button>
-    </div>
   </div>
 </div>
 
@@ -2445,43 +2459,63 @@ html, body {
   max-height:80vh;overflow-y:auto;">
   <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;position:sticky;top:0"></div>
 
-  <!-- القسم الأول: الرئيسية -->
-  <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;padding:0 2px">الإدارة</div>
-  <div id="mobileMoreAdminSection" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-    <button onclick="mbnSwitch('payments',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">💰</span>المدفوعات
-    </button>
-    <button onclick="mbnSwitch('teachers',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">👨‍🏫</span>المعلمون
-    </button>
-    <button onclick="mbnSwitch('reports',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">📊</span>التقارير
-    </button>
-    <button onclick="mbnSwitch('reminders',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🔔</span>التذكيرات
-    </button>
-    <button onclick="mbnSwitch('broadcast',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">📢</span>رسالة جماعية
-    </button>
-    <button onclick="mbnSwitch('packages',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🎒</span>الباقات
-    </button>
-    <button onclick="mbnSwitch('expenses',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">💸</span>المصاريف
-    </button>
-    <button onclick="mbnSwitch('calendar',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🗓️</span>التقويم
-    </button>
-    <button onclick="mbnSwitch('timetable',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🕐</span>جدول الحصص
-    </button>
-    <button onclick="mbnSwitch('archive',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:#C64B3C14;border:1px solid #C64B3C33;color:#C64B3C;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">🗂️</span>الأرشيف
-    </button>
-    <button onclick="mbnSwitch('settings',null);closeMobileMore()" style="padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
-      <span style="font-size:22px">⚙️</span>الإعدادات
-    </button>
+  <!-- الإدارة -->
+  <div id="mobileMoreAdminSection" style="display:none">
+
+    <div class="mm-section-lbl">المالية</div>
+    <div class="mm-grid">
+      <button onclick="mbnSwitch('payments',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">💰</span>المدفوعات
+      </button>
+      <button onclick="mbnSwitch('expenses',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">💸</span>المصاريف
+      </button>
+      <button onclick="mbnSwitch('packages',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">🎒</span>الباقات
+      </button>
+    </div>
+
+    <div class="mm-section-lbl">المعلمون</div>
+    <div class="mm-grid">
+      <button onclick="mbnSwitch('teachers',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">👨‍🏫</span>المعلمون
+      </button>
+    </div>
+
+    <div class="mm-section-lbl">الجدولة</div>
+    <div class="mm-grid">
+      <button onclick="mbnSwitch('calendar',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">🗓️</span>التقويم
+      </button>
+      <button onclick="mbnSwitch('timetable',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">🕐</span>جدول الحصص
+      </button>
+    </div>
+
+    <div class="mm-section-lbl">التقارير والتواصل</div>
+    <div class="mm-grid">
+      <button onclick="mbnSwitch('reports',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">📊</span>التقارير
+      </button>
+      <button onclick="mbnSwitch('reminders',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">🔔</span>التذكيرات
+      </button>
+      <button onclick="mbnSwitch('broadcast',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">📢</span>رسالة جماعية
+      </button>
+    </div>
+
+    <div class="mm-section-lbl">النظام</div>
+    <div class="mm-grid">
+      <button onclick="mbnSwitch('archive',null);closeMobileMore()" class="mm-btn" style="background:#C64B3C14;border-color:#C64B3C33;color:#C64B3C">
+        <span class="mm-icon">🗂️</span>الأرشيف
+      </button>
+      <button onclick="mbnSwitch('settings',null);closeMobileMore()" class="mm-btn">
+        <span class="mm-icon">⚙️</span>الإعدادات
+      </button>
+    </div>
   </div>
+
 
   <button onclick="doLogout()" style="width:100%;padding:14px;border-radius:14px;background:#C64B3C14;border:1px solid #C64B3C33;color:#C64B3C;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
     🚪 تسجيل الخروج
@@ -2554,7 +2588,11 @@ const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","
 const STORAGE_KEY = 'arqam_v4';
 
 function clearAllDataNow(){
-  if(!confirm('⚠️ سيتم حذف كل البيانات من هذا المتصفح نهائياً. هل أنت متأكد؟')) return;
+  const typed = prompt('⚠️ هذا الإجراء سيحذف كل البيانات نهائياً من هذا المتصفح ولا يمكن التراجع عنه.\n\nللتأكيد، اكتب كلمة "حذف" بالضبط:');
+  if(typed !== 'حذف'){
+    if(typed !== null) toast('لم تتم الكتابة بشكل صحيح — تم إلغاء الحذف','error');
+    return;
+  }
   localStorage.clear();
   sessionStorage.clear();
   location.reload();
@@ -2927,19 +2965,30 @@ function setupUI(){
   const nav=document.getElementById('sidebarNav');
   if(isAdmin()){
     nav.innerHTML=`
+      <div class="nav-section-lbl">الرئيسية</div>
       <button class="nav-btn active" onclick="showTab('dashboard',this)"><span class="nav-icon">📊</span> لوحة التحكم</button>
       <button class="nav-btn" onclick="showTab('students',this)"><span class="nav-icon">👥</span> الطلاب</button>
       <button class="nav-btn" onclick="showTab('attendance',this)"><span class="nav-icon">✅</span> الحضور</button>
+
+      <div class="nav-section-lbl">المالية</div>
       <button class="nav-btn" onclick="showTab('payments',this)"><span class="nav-icon">💰</span> المدفوعات</button>
-      <button class="nav-btn" onclick="showTab('teachers',this)"><span class="nav-icon">🎓</span> المعلمون</button>
-      <button class="nav-btn" onclick="showTab('packages',this)"><span class="nav-icon">🎒</span> الباقات</button>
-      <button class="nav-btn" onclick="showTab('reports',this)"><span class="nav-icon">📈</span> التقارير</button>
       <button class="nav-btn" onclick="showTab('expenses',this)"><span class="nav-icon">💹</span> الأرباح والمصاريف</button>
-      <button class="nav-btn" onclick="showTab('reminders',this)"><span class="nav-icon">🔔</span> التذكيرات الذكية</button>
-      <button class="nav-btn" onclick="showTab('schedule',this)"><span class="nav-icon">📅</span> جدول المواعيد</button>
+      <button class="nav-btn" onclick="showTab('packages',this)"><span class="nav-icon">🎒</span> الباقات</button>
+
+      <div class="nav-section-lbl">المعلمون</div>
+      <button class="nav-btn" onclick="showTab('teachers',this)"><span class="nav-icon">🎓</span> المعلمون</button>
+
+      <div class="nav-section-lbl">الجدولة</div>
       <button class="nav-btn" onclick="showTab('calendar',this)"><span class="nav-icon">🗓️</span> التقويم</button>
       <button class="nav-btn" onclick="showTab('timetable',this)"><span class="nav-icon">🗓️</span> جدول الحصص</button>
+      <button class="nav-btn" onclick="showTab('schedule',this)"><span class="nav-icon">📅</span> جدول المواعيد</button>
+
+      <div class="nav-section-lbl">التقارير والتواصل</div>
+      <button class="nav-btn" onclick="showTab('reports',this)"><span class="nav-icon">📈</span> التقارير</button>
+      <button class="nav-btn" onclick="showTab('reminders',this)"><span class="nav-icon">🔔</span> التذكيرات الذكية</button>
       <button class="nav-btn" onclick="showTab('broadcast',this)"><span class="nav-icon">📢</span> رسالة جماعية</button>
+
+      <div class="nav-section-lbl">النظام</div>
       <button class="nav-btn" onclick="showTab('archive',this)"><span class="nav-icon">🗂️</span> أرشيف الطلاب <span style="background:#C64B3C14;color:#C64B3C;font-size:10px;padding:1px 6px;border-radius:10px;margin-right:4px" id="archiveBadge"></span></button>
       <button class="nav-btn" onclick="showTab('settings',this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
     `;
@@ -2955,7 +3004,7 @@ function setupUI(){
 
   // ── تحديث قائمة "المزيد" على الموبايل حسب الدور ──
   const moreAdminSec = document.getElementById('mobileMoreAdminSection');
-  if(moreAdminSec) moreAdminSec.style.display = isAdmin() ? 'grid' : 'none';
+  if(moreAdminSec) moreAdminSec.style.display = isAdmin() ? 'block' : 'none';
   let moreTeacherSec = document.getElementById('mobileMoreTeacherSection');
   if(!isAdmin()){
     if(!moreTeacherSec){
@@ -8126,8 +8175,17 @@ function renderSettings(){
       <div style="margin-top:20px;background:linear-gradient(135deg,#B8892B14,#FFFFFF);border:1px solid #B8892B55;border-radius:16px;padding:20px">
         <div style="font-size:14px;font-weight:900;color:#B8892B;margin-bottom:6px">🔧 إصلاح رصيد الحصص</div>
         <div style="font-size:12px;color:#6B7570;margin-bottom:14px">تشخيص وإصلاح فوري لجميع الطلاب الذين لديهم رصيد خاطئ</div>
-        <button class="btn" onclick="openSessionFixTool()" style="background:#92400E;color:#9C7223;border:1px solid #B8892B;width:100%;justify-content:center;padding:12px;font-size:13px">
+        <button class="btn" onclick="openSessionFixTool()" style="background:#B8892B14;color:#9C7223;border:1px solid #B8892B55;width:100%;justify-content:center;padding:12px;font-size:13px">
           🔍 فتح أداة التشخيص والإصلاح
+        </button>
+      </div>
+
+      <!-- ══ منطقة الخطر ══ -->
+      <div style="margin-top:20px;background:#C64B3C0A;border:1px solid #C64B3C33;border-radius:16px;padding:20px">
+        <div style="font-size:14px;font-weight:900;color:#C64B3C;margin-bottom:6px">⚠️ منطقة الخطر</div>
+        <div style="font-size:12px;color:#6B7570;margin-bottom:14px">حذف كل البيانات نهائياً من هذا المتصفح — لا يمكن التراجع عن هذا الإجراء. تأكد من عمل نسخة احتياطية أولاً.</div>
+        <button class="btn" onclick="clearAllDataNow()" style="background:transparent;border:1px solid #C64B3C;color:#C64B3C;width:100%;justify-content:center;padding:12px;font-size:13px">
+          🗑️ حذف كل البيانات من هذا المتصفح
         </button>
       </div>
     </div>`;
