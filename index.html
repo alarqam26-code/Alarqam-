@@ -2640,77 +2640,124 @@ let db = {
 // STORAGE
 // ═══════════════════════════════════════════════════════════════
 function loadDB(){
+  let raw;
   try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      const parsed=JSON.parse(raw);
-      // دعم الصيغتين: القديمة (db مباشرة) والجديدة (wrapper مع version)
-      // صيغة v24: { version: رقم, savedAt: تاريخ, data: {...} }
-      // صيغة قديمة: البيانات مباشرة
-      const isNewFormat = parsed.version && parsed.data && typeof parsed.data === 'object' && parsed.data.students;
-      const loaded = isNewFormat ? parsed.data : parsed;
-      db=loaded;
-      if(!db.teachers)db.teachers=[];
-      if(!db.users||!db.users.length)db.users=DEFAULT_USERS.slice();
-      // Fix broken sync_ hashed passwords → reset to 1234
-      if(db.users) db.users.forEach(u=>{ if(u.password&&u.password.startsWith('sync_'))u.password='1234'; });
-      if(!db.settings)db.settings={academyName:"أكاديمية الأرقم",academySubtitle:"لتحفيظ القرآن الكريم",phone:"",phone2:"",whatsapp:"",email:"",address:"",facebook:"",logo:"📖",primaryColor:"#0A4F42",currency:"ج.م",sessionReminderDays:3};
-      if(!db.customPackages)db.customPackages=Object.entries(PKG).map(([price,sessions])=>({price:+price,sessions:+sessions,label:''}));
-      syncCustomPackages();
-      // Ensure teacherId field on students
-      let _needsSave=false;
-      db.students.forEach(s=>{
-        if(s.teacherId===undefined)s.teacherId=null;
-        if(!s.scheduleDays)s.scheduleDays=[];
-        if(!s.scheduleTime)s.scheduleTime='';
-        if(!s.scheduleDuration)s.scheduleDuration=60;
-        if(!s.renewHistory)s.renewHistory=[];
-        // ══ MIGRATION v35: يعمل مرة واحدة فقط لكل طالب ══
-        // إذا كان الطالب قد مرّ بالترحيل من قبل → لا تُعدّل sessions
-        if(!s._migrated_v35){
-          _needsSave = true;
-          const totalAtt = db.attendance.filter(a=>a.sid===s.id&&a.status==="حاضر").length;
-          const pkgSess  = PKG[s.pkg] || 8;
-          if(s.renewHistory && s.renewHistory.length){
-            const last    = s.renewHistory[s.renewHistory.length-1];
-            const lastSess = last.sessions || pkgSess;
-            s.sessions            = lastSess;
-            s.renewedAtAttendance = totalAtt > lastSess ? totalAtt - lastSess : 0;
-          } else {
-            s.sessions            = pkgSess;
-            s.renewedAtAttendance = 0;
-          }
-          s._migrated_v35 = true; // علامة تمنع إعادة الترحيل عند كل تسجيل دخول
-        }
-      });
-      if(!db.postponed)db.postponed=[];
-      if(!db.appointments)db.appointments=[];
-      if(!db.pendingApprovals)db.pendingApprovals=[];
-      db.attendance.forEach(a=>{if(a.teacherId===undefined)a.teacherId=null;});
-      // ضمان أن كل سجل حضور له id فريد منذ بداية الجلسة — يمنع تعارض/تكرار
-      // أرقام التعريف عند استخدام نوافذ التعديل والحذف بمختلف أنواعها.
-      if(typeof fixAttendanceIds==='function') fixAttendanceIds();
-      // Migrate existing payments: add paymentLog if missing + fix NaN ids
-      let maxPayId=0;
-      db.payments.forEach(p=>{
-        if(!p.paymentLog){
-          p.paymentLog=p.paid>0?[{amount:p.paid,date:p.date||'—',by:'سجل سابق',at:p.date||'',note:''}]:[];
-        }
-        if(typeof p.id==='number'&&!isNaN(p.id)&&p.id>maxPayId)maxPayId=p.id;
-      });
-      // Fix any payments with NaN/null/undefined id
-      db.payments.forEach(p=>{
-        if(!p.id||isNaN(+p.id)){p.id=++maxPayId;}
-      });
-      // ══ v35: حفظ فوري بعد الترحيل ══
-      if(_needsSave){
-        try{
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({version:DB_VERSION,savedAt:new Date().toISOString(),data:db}));
-          console.log('✅ v35 migration done');
-        }catch(e){}
-      }
+    raw = localStorage.getItem(STORAGE_KEY);
+  }catch(e){
+    console.error('❌ فشل قراءة localStorage:', e);
+    _handleLoadFailure('تعذّر الوصول إلى بيانات المتصفح المحفوظة.');
+    return;
+  }
+
+  if(!raw) return; // لا توجد بيانات محفوظة بعد (أول استخدام فعلي) — طبيعي، ليس خطأ
+
+  let parsed;
+  try{
+    parsed = JSON.parse(raw);
+  }catch(e){
+    // ══ بيانات تالفة/مبتورة في localStorage — لا نستمر بقاعدة بيانات فارغة أبداً ══
+    console.error('❌ بيانات محفوظة تالفة (JSON parse فشل):', e);
+    _handleLoadFailure('البيانات المحفوظة على هذا الجهاز تالفة أو غير مكتملة.');
+    return;
+  }
+
+  try{
+    // دعم الصيغتين: القديمة (db مباشرة) والجديدة (wrapper مع version)
+    // صيغة v24: { version: رقم, savedAt: تاريخ, data: {...} }
+    // صيغة قديمة: البيانات مباشرة
+    const isNewFormat = parsed.version && parsed.data && typeof parsed.data === 'object' && parsed.data.students;
+    const loaded = isNewFormat ? parsed.data : parsed;
+
+    // ══ فحص أمان: تأكد أن البيانات المحمّلة فعلاً تحتوي على البنية المتوقعة ══
+    // إذا كانت "students" غير موجودة كمصفوفة، فهذا ليس db صالحاً — لا تستبدل الحالي
+    if(!loaded || typeof loaded !== 'object' || !Array.isArray(loaded.students)){
+      console.error('❌ بنية البيانات المحمّلة غير صالحة (students ليست مصفوفة)');
+      _handleLoadFailure('البيانات المحفوظة على هذا الجهاز غير صالحة البنية.');
+      return;
     }
-  }catch{}
+
+    db=loaded;
+    if(!db.teachers)db.teachers=[];
+    if(!db.users||!db.users.length)db.users=DEFAULT_USERS.slice();
+    // Fix broken sync_ hashed passwords → reset to 1234
+    if(db.users) db.users.forEach(u=>{ if(u.password&&u.password.startsWith('sync_'))u.password='1234'; });
+    if(!db.settings)db.settings={academyName:"أكاديمية الأرقم",academySubtitle:"لتحفيظ القرآن الكريم",phone:"",phone2:"",whatsapp:"",email:"",address:"",facebook:"",logo:"📖",primaryColor:"#0A4F42",currency:"ج.م",sessionReminderDays:3};
+    if(!db.customPackages)db.customPackages=Object.entries(PKG).map(([price,sessions])=>({price:+price,sessions:+sessions,label:''}));
+    if(!db.attendance)db.attendance=[];
+    if(!db.payments)db.payments=[];
+    syncCustomPackages();
+    // Ensure teacherId field on students
+    let _needsSave=false;
+    db.students.forEach(s=>{
+      if(s.teacherId===undefined)s.teacherId=null;
+      if(!s.scheduleDays)s.scheduleDays=[];
+      if(!s.scheduleTime)s.scheduleTime='';
+      if(!s.scheduleDuration)s.scheduleDuration=60;
+      if(!s.renewHistory)s.renewHistory=[];
+      // ══ MIGRATION v35: يعمل مرة واحدة فقط لكل طالب ══
+      // إذا كان الطالب قد مرّ بالترحيل من قبل → لا تُعدّل sessions
+      if(!s._migrated_v35){
+        _needsSave = true;
+        const totalAtt = db.attendance.filter(a=>a.sid===s.id&&a.status==="حاضر").length;
+        const pkgSess  = PKG[s.pkg] || 8;
+        if(s.renewHistory && s.renewHistory.length){
+          const last    = s.renewHistory[s.renewHistory.length-1];
+          const lastSess = last.sessions || pkgSess;
+          s.sessions            = lastSess;
+          s.renewedAtAttendance = totalAtt > lastSess ? totalAtt - lastSess : 0;
+        } else {
+          s.sessions            = pkgSess;
+          s.renewedAtAttendance = 0;
+        }
+        s._migrated_v35 = true; // علامة تمنع إعادة الترحيل عند كل تسجيل دخول
+      }
+    });
+    if(!db.postponed)db.postponed=[];
+    if(!db.appointments)db.appointments=[];
+    if(!db.pendingApprovals)db.pendingApprovals=[];
+    db.attendance.forEach(a=>{if(a.teacherId===undefined)a.teacherId=null;});
+    // ضمان أن كل سجل حضور له id فريد منذ بداية الجلسة — يمنع تعارض/تكرار
+    // أرقام التعريف عند استخدام نوافذ التعديل والحذف بمختلف أنواعها.
+    if(typeof fixAttendanceIds==='function') fixAttendanceIds();
+    // Migrate existing payments: add paymentLog if missing + fix NaN ids
+    let maxPayId=0;
+    db.payments.forEach(p=>{
+      if(!p.paymentLog){
+        p.paymentLog=p.paid>0?[{amount:p.paid,date:p.date||'—',by:'سجل سابق',at:p.date||'',note:''}]:[];
+      }
+      if(typeof p.id==='number'&&!isNaN(p.id)&&p.id>maxPayId)maxPayId=p.id;
+    });
+    // Fix any payments with NaN/null/undefined id
+    db.payments.forEach(p=>{
+      if(!p.id||isNaN(+p.id)){p.id=++maxPayId;}
+    });
+    // ══ v35: حفظ فوري بعد الترحيل ══
+    if(_needsSave){
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({version:DB_VERSION,savedAt:new Date().toISOString(),data:db}));
+        console.log('✅ v35 migration done');
+      }catch(e){}
+    }
+  }catch(e){
+    console.error('❌ خطأ غير متوقع أثناء تحميل البيانات:', e);
+    _handleLoadFailure('حدث خطأ غير متوقع أثناء تحميل البيانات المحفوظة.');
+  }
+}
+
+// ══ عند فشل تحميل البيانات الأساسية: حاول الاسترداد من نسخة احتياطية تلقائية بدل المتابعة بقاعدة بيانات فارغة ══
+function _handleLoadFailure(reasonMsg){
+  try{
+    const backups = JSON.parse(localStorage.getItem('arqam_backups_v4')||'[]');
+    const goodBackup = backups.find(b=>b && b.data && Array.isArray(b.data.students) && b.data.students.length>0);
+    if(goodBackup){
+      db = goodBackup.data;
+      alert('⚠️ '+reasonMsg+'\n\nتم استرداد آخر نسخة احتياطية تلقائية محفوظة بتاريخ: '+(goodBackup.savedAt||'غير معروف')+'\n\nيُرجى مراجعة بياناتك والتأكد من سلامتها، ثم أخذ نسخة احتياطية يدوية فورية من الإعدادات.');
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:DB_VERSION,savedAt:new Date().toISOString(),data:db})); }catch(e){}
+      return;
+    }
+  }catch(e){}
+  // لا توجد أي نسخة احتياطية صالحة — أبلغ المستخدم بدل المتابعة بصمت ببيانات فارغة
+  alert('⚠️ '+reasonMsg+'\n\nلم يتم العثور على نسخة احتياطية سليمة لاستعادتها تلقائياً.\n\nإذا كان لديك ملف نسخة احتياطية (JSON) تم تصديره سابقاً، يمكنك استيراده من شاشة الإعدادات بعد تسجيل الدخول.\n\nلن يتم حذف أي بيانات — إذا كانت البيانات لا تزال محفوظة على الجهاز فسيتم عرضها بمجرد حل المشكلة.');
 }
 // ══════════════════════════════════════════════════════════════
 // DATA LAYER — v24
